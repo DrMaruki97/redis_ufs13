@@ -2,8 +2,8 @@ ciao ragazzi!
 
 come state?
 
-<<<<<<< HEAD
+
 Io bene tu?
-=======
+
 eiiiii
->>>>>>> 41b3c4dfa0b39e57dab8c159135ca3e745937db5
+
