@@ -1,18 +1,22 @@
-import redis 
+import redis
 
-def LandingPage(intestazione,comandi:dict):
+intestazione = '='*10 + '\nREDCHAT\n' + '='*10
+
+def LandingPage():
     print(intestazione)
-    for el in comandi.keys('landingpage:*'):
-        print(f'{el[el.index(':'):]} {comandi[el]}')
+    comandi = r.get('system:LandingPage:comandi')
+    for i in range(len(comandi)):
+        print(f'{i+1}. {comandi[i]}')
 
 
-def UserPage(intestazione,comandi:dict):
+def UserPage():
     print(intestazione)
-    for el in comandi.keys('userpage:*'):
-        print(f'{el[el.index(':'):]} {comandi[el]}')
+    comandi = r.get('system:UserPage:comandi')
+    for i in range(len(comandi)):
+        print(f'{i+1}. {comandi[i]}')
 
 
-def login(r:Redis):
+def login():
     user = input('username >> ')
     psw = input('password >> ')
     password = r.get(user)
@@ -22,11 +26,14 @@ def login(r:Redis):
         print('Username o Password non corretti')
 
 
-def registration(r:Redis):
-    user = input('Choose a username >> ')
-    while r.get(user):
-        print('Username not available')
+def registration():
+    while True:
         user = input('Choose a username >> ')
+        if r.get(user):
+            print('username not available')
+        else:
+            break
     psw = input('Choose a password >> ')
     r.set(user,str(hash(psw)))
+    r.lpush('system:all_users',user)
     return f'user:{user}:{str(hash(psw))}'
