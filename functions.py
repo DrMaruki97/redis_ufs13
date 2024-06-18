@@ -1,39 +1,42 @@
 import redis
 
-intestazione = '='*10 + '\nREDCHAT\n' + '='*10
-
-def LandingPage():
+def LandingPage(intestazione,comandi):
     print(intestazione)
-    comandi = r.get('system:LandingPage:comandi')
-    for i in range(len(comandi)):
-        print(f'{i+1}. {comandi[i]}')
+    for i in range(len(comandi['LandingPage'])):
+        print(f'{i+1}. {comandi['LandingPage'][i]}')
 
 
-def UserPage():
+def UserPage(intestazione,comandi):
     print(intestazione)
-    comandi = r.get('system:UserPage:comandi')
-    for i in range(len(comandi)):
-        print(f'{i+1}. {comandi[i]}')
+    for i in range(len(comandi['UserPage'])):
+        print(f'{i+1}. {comandi['UserPage'][i]}')
 
 
-def login():
-    user = input('username >> ')
-    psw = input('password >> ')
-    password = r.get(user)
-    if str(hash(psw)) == password:
-        return f'user:{user}:{password}'
-    else:
-        print('Username o Password non corretti')
-
-
-def registration():
-    while True:
-        user = input('Choose a username >> ')
-        if r.get(user):
-            print('username not available')
+def login(user,psw,salt='wasd',r:Redis):
+    try:
+        password = r.get(user)
+        print(str(hash(psw+salt)),password)
+        if str(hash(psw+salt)) == password:           
+            return True
         else:
-            break
-    psw = input('Choose a password >> ')
-    r.set(user,str(hash(psw)))
-    r.lpush('system:all_users',user)
-    return f'user:{user}:{str(hash(psw))}'
+            return False
+    except:
+        raise LookupError
+   
+
+def registration(user,psw,salt='wasd',r:Redis):
+    try:
+        r.set(user,str(hash(psw+salt)))
+        r.lpush('system:all_users',user)
+        # Mancano delle cose d ainfilare qua dentro
+        return True
+    except:
+        return False
+    
+
+def cambio_psw(user, psw,r:Redis):
+    try:
+        r.set(user,str(hash(psw)))
+        return True
+    except:
+        return False    
