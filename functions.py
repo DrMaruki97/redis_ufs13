@@ -12,29 +12,26 @@ def UserPage(intestazione,comandi):
         print(f'{i+1}. {comandi['UserPage'][i]}')
 
 
-def login(user,psw,salt='wasd',r:Redis):
+def login(user,psw,r,salt='wasd'):
     try:
         password = r.get(user)
-        print(str(hash(psw+salt)),password)
         if str(hash(psw+salt)) == password:           
-            return True
+            return r.get(f'id:{user}')
         else:
             return False
     except:
         raise LookupError
    
 
-def registration(user,psw,salt='wasd',r:Redis):
+def registration(user,psw,r,salt='wasd'):
     try:
-        r.set(user,str(hash(psw+salt)))
-        r.lpush('system:all_users',user)
-        # Mancano delle cose d ainfilare qua dentro
+        r.set(user.lower(),str(hash(psw+salt)))   #Dobbiamo ancora decidere come creare l'id
         return True
     except:
         return False
     
 
-def cambio_psw(user, psw,r:Redis):
+def cambio_psw(user, psw,r):
     try:
         r.set(user,str(hash(psw)))
         return True
