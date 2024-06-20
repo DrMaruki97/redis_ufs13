@@ -1,11 +1,14 @@
 import streamlit as st
 import random
 import time
-st.set_page_config(
-    page_title="Chat",
-    page_icon="💬",
-)
 
+
+
+if 'user' in st.session_state:
+    f"{st.session_state['user']}"
+else:
+    st.info('Please Login from the Home page and try again.')
+    st.stop()
 
 st.title('Interface for the Redis Chat')
 
@@ -45,7 +48,7 @@ if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
     with st.chat_message("user"):
-        st.markdown("***User:*** "+prompt)
+        st.markdown(f"***{st.session_state['user']}*** "+prompt)
 
     # Display assistant response in chat message container
     with st.chat_message(selection):
