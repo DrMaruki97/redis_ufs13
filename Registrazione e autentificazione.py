@@ -60,6 +60,13 @@ def add_friend(user, friend):
     else:
         # Se esiste, aggiungiamo l'amico alla rubrica
         r.sadd("rubrica:" + user, friend )
+
+def remove_friend(user, friend):
+    if not r.exists("user:" + friend):
+        return False
+    else:
+        # Se esiste, rimuoviamo l'amico alla rubrica
+        r.scard("rubrica:" + user, friend )
 def stampa_rubrica(user):
     # Stampiamo la rubrica
     for friend in r.smembers("rubrica:" + user):
