@@ -1,4 +1,5 @@
-import redis 
+import redis
+import bcrypt
 
 def connect():
     r = redis.Redis(
@@ -8,3 +9,4 @@ def connect():
     decode_responses=True
     )
     return r
+
