@@ -7,7 +7,7 @@ pwd = input("Inserisci un password utente: ")
 
 # Creiamo una funzione di registrazione utente
 
-def registrazione_utente(username, pwd):
+def registrazione_utente(username, pwd,r):
 
     # Controlliamo l'unicità del nome utente
     if r.exists(username):
