@@ -18,7 +18,7 @@ def hash_password(pwd):
     return hashed_pwd
 
 # Creiamo una funzione di registrazione utente
-def registrazione_utente(lista):
+def signup(lista):
 
     # Facciamo in modo di non salvare in bianco la password
     username = lista[0]
@@ -38,40 +38,36 @@ def registrazione_utente(lista):
 
 
 # Creiamo una funzione di identificazione
-def autenticazione_utente(username, pwd):
-    while True:
-        inserimento()
-        # Controlliamo l'esistenza dell'utente
-        if r.exists(username):
-            # Hashamo la pwd inserita
-            check_pwd = hash_password(pwd)
-            stored_pwd = r.get("user:" + username)
+def login(lista):
+    username = lista[0]
+    pwd = lista[1]
+    # Controlliamo l'esistenza dell'utente
+    if r.exists(username):
+        # Hashamo la pwd inserita
+        check_pwd = hash_password(pwd)
+        stored_pwd = r.get("user:" + username)
 
         if stored_pwd == check_pwd:
-            print("Autenticazione avvenuta con successo")
             return True
-        else:
-            return False
+        return login(inserimento())
 
 
-# Creiamo una funzione per stampare la rubrica
-def stampa_rubrica(username):
-    # Otteniamo tutti i membri del set
-    rubrica = r.smembers("rubrica:" + username)
 
+# Creiamo una funzione per aggiungere un amico nella rubrica
+def add_friend(user, friend):
+    if not r.exists("user:" + friend):
+        return False
+    else:
+        # Se esiste, aggiungiamo l'amico alla rubrica
+        r.sadd("rubrica:" + user, friend )
+def stampa_rubrica(user):
     # Stampiamo la rubrica
-    for username in rubrica:
-        print(username)
-
-
-def aggiungi_amico(username):
-    if not r.exists("user:" + username):
-        return "Inserisci un username esistente"
-
-    # Se esiste, aggiungiamo l'amico alla rubrica
-    r.zadd("rubrica:" + id_user, username)
-
+    for friend in r.smembers("rubrica:" + user):
+        print(friend)
 
 
 r = connect()
-registrazione_utente(inserimento())
+signup(inserimento())
+login(inserimento())
+add_friend(input("Inserisci il tuo user"), input("Inserisci il tuo friend"))
+stampa_rubrica(input("Inserisci il tuo user"))
