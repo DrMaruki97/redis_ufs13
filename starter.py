@@ -1,4 +1,3 @@
-import redis
 from conn import connect
 
 
@@ -34,6 +33,7 @@ def signup(lista):
 
         # Creiamo istanza redis per id utente
         r.set("id_utente:" + username, id_user)
+        return True
 
 
 
@@ -49,7 +49,7 @@ def login(lista):
 
         if stored_pwd == check_pwd:
             return True
-        return login(inserimento())
+        return False
 
 
 
@@ -60,6 +60,8 @@ def add_friend(user, friend):
     else:
         # Se esiste, aggiungiamo l'amico alla rubrica
         r.sadd("rubrica:" + user, friend )
+        return True
+
 
 def remove_friend(user, friend):
     if not r.exists("user:" + friend):
@@ -67,6 +69,9 @@ def remove_friend(user, friend):
     else:
         # Se esiste, rimuoviamo l'amico alla rubrica
         r.scard("rubrica:" + user, friend )
+        return True
+
+
 def stampa_rubrica(user):
     # Stampiamo la rubrica
     for friend in r.smembers("rubrica:" + user):
