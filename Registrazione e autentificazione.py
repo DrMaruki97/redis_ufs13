@@ -3,35 +3,48 @@ import redis
 from conn import connect
 
 
-connect()
+def inserimento():
+    while True:
+        username = input("Inserisci un nome utente: ")
+        pwd = input("Inserisci un password utente: ")
+        if 4 < len(pwd) < 17 and len(username) < 20:
+            break
+    return [username, pwd]
 
-
+def hash_password(pwd):
+    # Aggiungi un salt fisso
+    salt = "42"
+    # Calcola l'hash della password con il salt
+    hashed_pwd = hash(pwd + salt)
+    return hashed_pwd
 
 # Creiamo una funzione di registrazione utente
-def registrazione_utente(username, pwd):
+def registrazione_utente(lista):
+
     # Facciamo in modo di non salvare in bianco la password
-    pwd_hash = hash_password(pwd)
+    username = lista[0]
+    if not r.exists(username):
+        pwd = lista[1]
+        pwd_hash = hash_password(pwd)
 
-    # Creiamo istanza redis per l'utente
-    r.set("user:" + username, pwd_hash)
+        # Creiamo istanza redis per l'utente
+        r.set("user:" + username, pwd_hash)
 
-    # Creiamo un id utente
-    id_user = r.incr("id_utente")
+        # Creiamo un id utente
+        id_user = r.incr("id_utente")
 
-    # Creiamo istanza redis per id utente
-    r.set("id_utente:" + username, id_user)
+        # Creiamo istanza redis per id utente
+        r.set("id_utente:" + username, id_user)
 
-    # Creiamo istanza rubrica
-    r.zadd('rubrica:' + id_user, {'membro1': 1.0, 'membro2': 2.0})
 
 
 # Creiamo una funzione di identificazione
-"""
 def autentificazione_utente(username, pwd):
-    # Controlliamo l'esistenza dell'utente
-    if not r.exists(username):
-        return "Utente non esistente"
-
+    while True:
+        inserimento()
+        # Controlliamo l'esistenza dell'utente
+        if r.exists(username):
+            hash_password(pwd)
     # Controlliamo, dopo averla recuperata, se la password fornita dall'utente corrisponde a quella memorizzata
 
     get_pwd_hash = r.get("user:" + username)
@@ -60,23 +73,8 @@ def aggiungi_amico(username):
 
     # Se esiste, aggiungiamo l'amico alla rubrica
     r.zadd("rubrica:" + id_user, username)
-"""
 
 
-def input():
-    while True:
-        username = input("Inserisci un nome utente: ")
-        pwd = input("Inserisci un password utente: ")
-        if 4 < len(pwd) < 17 and len(username) < 20:
-            if r.exists(username):
-                break
-    return username, pwd
 
-def hash_password(pwd):
-    # Aggiungi un salt fisso
-    salt = 42
-    # Calcola l'hash della password con il salt
-    hashed_pwd = hashlib.sha256((salt + pwd).encode('utf-8')).hexdigest()
-    return hashed_pwd
-
-registrazione_utente(input())
+r = connect()
+registrazione_utente(inserimento())
