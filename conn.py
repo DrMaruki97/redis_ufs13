@@ -1,5 +1,6 @@
 import redis 
 
+
 def connect():
     r = redis.Redis(
     host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
