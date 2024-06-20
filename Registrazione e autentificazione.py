@@ -1,4 +1,3 @@
-import bcrypt  # libreria per hashing delle pwd
 import redis
 from conn import connect
 
@@ -39,28 +38,26 @@ def registrazione_utente(lista):
 
 
 # Creiamo una funzione di identificazione
-def autentificazione_utente(username, pwd):
+def autenticazione_utente(username, pwd):
     while True:
         inserimento()
         # Controlliamo l'esistenza dell'utente
         if r.exists(username):
-            hash_password(pwd)
-    # Controlliamo, dopo averla recuperata, se la password fornita dall'utente corrisponde a quella memorizzata
+            # Hashamo la pwd inserita
+            check_pwd = hash_password(pwd)
+            stored_pwd = r.get("user:" + username)
 
-    get_pwd_hash = r.get("user:" + username)
-
-    if not bcrypt.checkpw(pwd.encode('utf-8'), get_pwd_hash.encode('utf-8')):
-        return "Autentificazione avvenuta correttamente"
-
-    # Ritorniamo user_id
-    id_user = r.get("id_utente:" + username)
-    return id_user
+        if stored_pwd == check_pwd:
+            print("Autenticazione avvenuta con successo")
+            return True
+        else:
+            return False
 
 
 # Creiamo una funzione per stampare la rubrica
-def stampa_rubrica(id_user):
+def stampa_rubrica(username):
     # Otteniamo tutti i membri del set
-    rubrica = r.smembers("rubrica:" + id_user)
+    rubrica = r.smembers("rubrica:" + username)
 
     # Stampiamo la rubrica
     for username in rubrica:
