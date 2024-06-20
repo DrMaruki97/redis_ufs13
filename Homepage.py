@@ -2,52 +2,55 @@ import streamlit as st
 from conn import connect
 import redis
 
-
-r = connect()
-
 st.set_page_config(
     page_title="Homepage",
     page_icon="🔥",
 )
+
+def streamlit_login(user, password, r):
+    print(user, password)
+    if r.exists("user:"+user)==1:
+        print('It exists!')
+        actualPass = r.get("user:"+ user)
+        print(actualPass)
+        if actualPass==password:
+            print('Password Match')
+            st.session_state['user'] = user
+            return True
+        else:
+            return False
+
+def streamlit_logout():
+    del st.session_state['user']
+
+r = connect()
+
 
 st.title('🔥 :red[Red]Chat 💬')
 
 # Create an empty container
 placeholder = st.empty()
 
-actual_email = "email"
-actual_password = "password"
-
-
 # Insert a form in the container
-def streamlit_login(log, user=None, password=None):
-    if r.exists(email) and r.get("user:"+ email)==hash(password+'42'):
-        st.session_state['user'] = user
-        return True
+
+if 'user' not in st.session_state:
+  login_form = st.form(key='login_form')
+  username = login_form.text_input(label='username')
+  password = login_form.text_input(label='password', type='password')
+  submit_button = login_form.form_submit_button(label='submit')
+
+
+  if submit_button:
+    login = streamlit_login(username, password, r)
+    if login:
+        st.session_state['user'] = username
+        st.success("Login successful")
     else:
-        return False
-def streamlit_logout():
-    del st.session_state['user']
+        st.error("Login failed")
 
-
-# Insert a form in the container
-with placeholder.form("login"):
-    st.markdown("#### Enter your credentials")
-    email = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    submit = st.form_submit_button("Login")
-    f"{hash('a')}"
-
-if submit and streamlit_login(email, email, password):
-    # If the form is submitted and the email and password are correct,
-    # clear the form/container and display a success message
-    placeholder.empty()
-    st.success("Login successful")
-    st.switch_page('pages/Friends.py')
-elif submit and streamlit_login(email, email, password) == False:
-    'Credenziali errate!'
-    f'{password}'
-    f'{hash(password+'42')}'
-#elif submit and email != actual_email and password != actual_password:
-    #st.error("Login failed")
-
+if 'user' in st.session_state:
+    st.empty()
+    st.write(f"hello, {st.session_state['user']}")
+    logout_button = st.button(label='logout')
+    if logout_button:
+        streamlit_logout()
