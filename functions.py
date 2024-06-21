@@ -23,7 +23,7 @@ def hash_pwd(pwd):
     hash_value = 89
     for char in pwd:
         hash_value = (hash_value * 31 + ord(char)) // len(pwd)
-    print(f"L'hash della stringa '{pwd}' è: {hash_value}")
+    print(f"L'hash della stringa '{pwd}' è: {hash_value}")  # Perchè questo print?
     return hash_value
 
 
@@ -34,7 +34,7 @@ salvata nel database), in entrambi i casi viene restituito lo {username}. Se la 
 
 def login_signup():
     while True:
-        username = input("Inserisci il tuo username: ")
+        username = input("Inserisci il tuo username: ")  # Io dividerei le due funzionalità
         pwd = input("Inserisci la password: ")
         if 4 < len(pwd) < 17 and len(username) < 20:
             break
@@ -125,5 +125,5 @@ def select_user(user):
 
 
 """Siate liberi di testare"""
-r = connect()
-select_user("reactor")
+#r = connect()
+#select_user("reactor")
