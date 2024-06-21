@@ -118,12 +118,33 @@ def select_user(user):
         return False, print("Hai inserito un numero non valido")
 
 
+# Le prossime sono da sistemare perchè userei una bitmap(forse dovremmo reintrodurre gli id)
+
+'''Funziona che controlla lo stato DnD di un utente (che dobbiamo aver creato e settato a 0 durante la registrazione/ settato a 0
+durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
+
+
+def check_dnd(user):
+    dnd = r.get(f'DnD:{user}')
+    return dnd
+
+
+
+
+def change_dnd(user,dnd):
+    try:
+        if dnd:
+            r.set(f'DnD:{user}',0)
+        else:
+            r.set(f'DnD:{user}',1)
+        return True
+    except:
+        return False
 
 
 
 
 
-
-"""Siate liberi di testare"""
+'''Siate liberi di testare'''
 #r = connect()
 #select_user("reactor")
