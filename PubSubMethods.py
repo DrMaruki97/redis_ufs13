@@ -1,3 +1,8 @@
+# I messaggi vanno pubblicati nel channel che ha lo stesso nome della 'room' e nella seguente forma:
+# <Mittente>::<Messaggio>::<datetime>  (Datetime fino ai minuti o volendo secondi) 
+
+
+
 import redis
 import time as t
 
@@ -17,6 +22,7 @@ def Evesdropping(user,p,r):
             if values[0] != user:
                 print(f'< {values[1]}  {values[2]}')
                 r.zadd(room, {})
+        t.sleep(2)
 
             
 
