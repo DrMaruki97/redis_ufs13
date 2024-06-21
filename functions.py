@@ -80,14 +80,50 @@ def manage_friends(user, friend):
         print("L'utente non esiste")
 
 
-"""STAMPA LISTA CONTATTI: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi con un determinato
-pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room, significa che sono amici"""
+"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi con un determinato
+pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room, significa che sono amici, viene 
+offerta la possibilità di scegliere la room per iniziare la chat e viene restituita la chiave associata alla room 
+f.e. "room:reactor:davidino" """
 
 
-def print_friends(user):
+def select_friend(user):
     cursor, keys = r.scan(0, match=f"room:{user}:*")
+    for index, key in enumerate(keys):
+        print(f"{index}: {key[len(user)+6:]}")
+    select = int(input("Inserire numero utente desiderato"))
+    try:
+        return keys[select]
+    except Exception as e:
+        return False, print("Hai inserito un numero non valido")
+
+
+"""RICERCA PARZIALE UTENTE: f. che permette la ricerca di un username anche parzialmente ("davi" invece che davidino),
+e che una volta selezionato automaticamente permette di aggiungerlo agli amici (tecnicamente inizializzare la chat),
+oppure rimuoverlo se è gia amico. Non usare direttamente la funzione manage_friends ma questa PRIMA"""
+
+
+def select_user(user):
+    ricerca = input("Inserire il nome utente da cercare: ")
+    lista_utenti = []
+    i = 0
+    cursor, keys = r.scan(0, match=f"user:*")
     for key in keys:
-        print(key[len(user)+6:])
+        if ricerca in key[5:]:
+            lista_utenti.append(f"{i}: {key[5:]}")
+    print(lista_utenti)
+    select = int(input("Inserire numero utente desiderato: "))
+    try:
+        return manage_friends(user, lista_utenti[select][3:])
+    except Exception as e:
+        return False, print("Hai inserito un numero non valido")
+
+
+
+
+
+
 
 
 """Siate liberi di testare"""
+r = connect()
+select_user("reactor")
