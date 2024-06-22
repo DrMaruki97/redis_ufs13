@@ -126,16 +126,10 @@ def timed_chat(user, friend, duration_chat):
         print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
 
 
-
-
-# Le prossime sono da sistemare perchè userei una bitmap(forse dovremmo reintrodurre gli id)
-
 '''Funziona che controlla lo stato DnD di un utente (che dobbiamo aver creato e settato a 0 durante la registrazione/ settato a 0
 durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 
-"""Siate liberi di testare"""
-r = connect()
-select_user("reactor")
+
 
 def check_dnd(user_id):
     dnd = r.getbit('sys:DnD',user_id)
@@ -147,3 +141,14 @@ def change_dnd(user_id,dnd):
         r.setbit('sys:DnD',user_id,0)
     else:
         r.setbit('sys:DnD',user_id,1)
+
+
+def ActiveChats(user):
+    chats = r.hgetall(f'Rooms:{user}')
+    return chats
+
+
+
+"""Siate liberi di testare"""
+r = connect()
+select_user("reactor")
