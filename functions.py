@@ -23,7 +23,7 @@ def hash_pwd(pwd):
     hash_value = 89
     for char in pwd:
         hash_value = (hash_value * 31 + ord(char)) // len(pwd)
-    print(f"L'hash della stringa '{pwd}' è: {hash_value}")
+    print(f"L'hash della stringa '{pwd}' è: {hash_value}")  # Perchè questo print? da eliminare
     return hash_value
 
 
@@ -34,7 +34,7 @@ salvata nel database), in entrambi i casi viene restituito lo {username}. Se la 
 
 def login_signup():
     while True:
-        username = input("Inserisci il tuo username: ")
+        username = input("Inserisci il tuo username: ")  # Io dividerei le due funzionalità
         pwd = input("Inserisci la password: ")
         if 4 < len(pwd) < 17 and len(username) < 20:
             break
@@ -75,7 +75,7 @@ def manage_friends(user, friend):
                 pass
         else:
             timestamp = time.time()
-            r.zadd("room:" + user + ":" + friend, {"member": 10.3})
+            r.zadd("room:" + user + ":" + friend, {"member": timestamp})
     else:
         print("L'utente non esiste")
 
@@ -109,17 +109,37 @@ def select_user(user):
     cursor, keys = r.scan(0, match=f"user:*")
     for key in keys:
         if ricerca in key[5:]:
-            lista_utenti.append(f"{i}: {key[5:]}")
+            lista_utenti.append(f"{i+1}: {key[5:]}")
+            i = i +1
     print(lista_utenti)
     select = int(input("Inserire numero utente desiderato: "))
     try:
-        return manage_friends(user, lista_utenti[select][3:])
+        return manage_friends(user, lista_utenti[select-1][3:])
     except Exception as e:
         return False, print("Hai inserito un numero non valido")
 
 
+# Le prossime sono da sistemare perchè userei una bitmap(forse dovremmo reintrodurre gli id)
+
+'''Funziona che controlla lo stato DnD di un utente (che dobbiamo aver creato e settato a 0 durante la registrazione/ settato a 0
+durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 
 """Siate liberi di testare"""
 r = connect()
 select_user("reactor")
+
+def check_dnd(user):
+    dnd = r.get(f'DnD:{user}')
+    return dnd
+
+
+def change_dnd(user,dnd):
+    try:
+        if dnd:
+            r.set(f'DnD:{user}',0)
+        else:
+            r.set(f'DnD:{user}',1)
+        return True
+    except:
+        return False
 
