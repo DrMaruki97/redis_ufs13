@@ -25,7 +25,7 @@ def msgs(user,messaggi:list):
                 mitt = '>'
             else:
                 mitt = '<'
-            print(f'{mitt} {msg['messaggio']}\t{msg['datetime']}')
+            print(mitt, msg['messaggio'], msg['datetime'])
 
 
 def speak(user):

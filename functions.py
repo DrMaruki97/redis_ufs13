@@ -1,7 +1,7 @@
 import redis
 
-
 """CONNESSIONE AL DB: f. decode_responses = le richieste sono decodificate, restituisce r variabile database"""
+
 
 def connect():
     r = redis.Redis(
@@ -43,18 +43,18 @@ def sign_up(username, pwd):
             r.incrby("sys:id_user", 1)
             c = r.set(f"id_usr:+{username}", r.get("sys:id_user"))
     else:
-        return False  #utente già esistente
-    return c  #True o False in base all'esito della set dell'id
+        return False  # utente già esistente
+    return c   # True o False in base all'esito della set dell'id
 
 
 def login(username, pwd):
     if r.exists(f"user:+{username.lower()}"):
         if hash_pwd(pwd) == r.get("user:" + username.lower()):
-            return True, r.get(f"id_usr:+{username}"), username #se login ha successo, restituisce true e id e usrname
+            return True, r.get(f"id_usr:+{username}"), username  # se login ha successo, restituisce true e id e usrname
         else:
-            return False  #pwd sbagliata
+            return False  # pwd sbagliata
     else:
-        return False  #utente non esiste
+        return False  # utente non esiste
 
 
 """GESTIONE AMICI"""
@@ -91,17 +91,16 @@ def select_user(username_da_cercare):
             lista_utenti.append(f"{i + 1}: {key[5:]}")
             i = i + 1
     return lista_utenti
-    #viene restituita una lista che è il risultato della ricerca, l'utente deve poter selezionare quello giusto
+    # viene restituita una lista che è il risultato della ricerca, l'utente deve poter selezionare quello giusto
+
 
 current_user = "reactor"
 
- 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
+
+
 def timed_chat(user, friend, duration_chat):
     if r.exists(f"room:{user}:{friend}"):
         r.zadd(f"t_room:{user}:{friend}")
         r.expire(f"t_room:{user}:{friend}", time=duration_chat)
         print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
-
-
-
