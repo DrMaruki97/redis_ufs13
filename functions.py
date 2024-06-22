@@ -3,7 +3,6 @@ import redis
 
 """CONNESSIONE AL DB: f. decode_responses = le richieste sono decodificate, restituisce r variabile database"""
 
-
 def connect():
     r = redis.Redis(
         host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
@@ -95,3 +94,14 @@ def select_user(username_da_cercare):
     #viene restituita una lista che è il risultato della ricerca, l'utente deve poter selezionare quello giusto
 
 current_user = "reactor"
+
+ 
+""" CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
+def timed_chat(user, friend, duration_chat):
+    if r.exists(f"room:{user}:{friend}"):
+        r.zadd(f"t_room:{user}:{friend}")
+        r.expire(f"t_room:{user}:{friend}", time=duration_chat)
+        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
+
+
+

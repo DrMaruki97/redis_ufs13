@@ -1,14 +1,13 @@
 import streamlit as st
-from functions import connect
-import redis
+import redis 
 
 st.set_page_config(
-    page_title="Homepage",
+    page_title="Login",
     page_icon="🔥",
 )
 
 def streamlit_login(user, password, r):
-    print(user, password)
+    print(user, password)   
     if r.exists("user:"+user)==1:
         print('It exists!')
         actualPass = r.get("user:"+ user)
@@ -16,6 +15,7 @@ def streamlit_login(user, password, r):
         if actualPass==password:
             print('Password Match')
             st.session_state['user'] = user
+            st.session_state['status'] = r.get('dnd:user:'+user)
             return True
         else:
             return False
@@ -23,7 +23,13 @@ def streamlit_login(user, password, r):
 def streamlit_logout():
     del st.session_state['user']
 
-r = connect()
+r = redis.Redis(
+    host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
+    port=16230,
+    password='y6ORUWqEjBvQZU3ICfuV8dgU8glOYFwL',
+    decode_responses=True
+    )
+st.session_state['r'] = r
 
 
 st.title('🔥 :red[Red]Chat 💬')
@@ -65,7 +71,4 @@ if 'user' not in st.session_state:
 
 if 'user' in st.session_state:
     st.empty()
-    st.write(f"Hello, {st.session_state['user']}")
-    logout_button = st.button(label='logout')
-    if logout_button:
-        streamlit_logout()
+    st.switch_page('pages/Friends.py')

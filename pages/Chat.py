@@ -1,24 +1,31 @@
 import streamlit as st
 import random
 import time
+from Login import streamlit_logout
 
 
 
 if 'user' in st.session_state:
-    f"{st.session_state['user']}"
+    st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
+    if st.session_state['status'] == '1':
+        st.sidebar.text(f"Do not disturb ⛔")
+    else:
+        st.sidebar.text(f"Available for chat ✔️ ")
+    logout_button = st.sidebar.button(label='Logout')
+    if logout_button:
+        streamlit_logout()
+        st.switch_page('Login.py')
 else:
     st.info('Please Login from the Home page and try again.')
-    st.stop()
+    st.switch_page('Login.py')
 
-st.title('Interface for the Redis Chat')
+st.title('Chat')
+selection = st.selectbox(label='Select who you wanna chat with.', options=['AI', 'Hoomanz'])
+
 
 # Tutorial
 # https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps#build-a-simple-chatbot-gui-with-streaming
 
-
-with st.sidebar:
-    friends=['AI', 'Hoomanz']
-    selection = st.selectbox(label='Select who you wanna chat with.', options=friends)
 
 # Streamed response emulator
 def response_generator():
@@ -43,7 +50,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # Accept user input
-if prompt := st.chat_input("What is up?"):
+if prompt := st.chat_input("What is up my man?"):
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container

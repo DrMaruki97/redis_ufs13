@@ -1,29 +1,25 @@
 import redis 
 import ui_functions as ui
 import functions as f
+import StreamMethods as sm
+import threading as thr
+import myfunctions as mf
 
 r = f.connect()    # Uso la funzione di Davide per stabilire la connessione
 
 comandi = {'LandingPage':['Login','Registration','Exit'],                   # Una lista di comandi, va data in argomento alle pagine
            'UserPage':['Chat','Rubrica','DnD','Change Password'],           # per stampare a schermo tutti i comandi che l'utente può
-           'ChatPage':['Active chats','Start new chat','Start timed chat'], # chiamare in una determinata pagina
+           'ChatPage':['Start chat','Start timed chat','Indietro'],         # chiamare in una determinata pagina
            'RubricPage':['Vedi Rubrica','Aggiungi contatto','Rimuovi contatto']
             }
 
-intestazione = '='*10+'\nREDCHAT\n'+'='*10          # Semplice intestazione, va data in argomento alle pagine
-
-if r.exists('system:users'):
-    sys_users = r.get('system:users')      # System:users è la chiave che contiene il numero di utenti registrati
-else:                                      # verrà utilizzata per attribuire un ID ad ogni utente al momento della registrazione
-    sys_user = 0
-    r.set('system:user',0)
+intestazione = '='*11+'\n  REDCHAT  \n'+'='*11          # Semplice intestazione, va data in argomento alle pagine
 
 page = 'LandingPage'
 
 
-while True:
-
-
+while True:                                             # Ciclo totale del programma, a seconda del valore di page esegue una
+                                                        # "pagina" differente
 
 
     if page == 'LandingPage':
@@ -33,9 +29,11 @@ while True:
             
 
             if action in ('1','login'):
-                user_val = lf.inserimento()
                 
-                if lf.login(user,psw,r):
+                user = input('Username >> ')
+                psw = input('Password >> ')
+                
+                if mf.login(user,psw):
                     page = 'UserPage'
                     break
                 
@@ -43,17 +41,28 @@ while True:
                     print('Username or Password not correct')
             
             elif action in ('2','registration'):
-                user = input('Choose a Username >> ')
-                sys_user = user.lower()
                 
-                while r.get(sys_user):
-                    print('Username not available')
+                print('Inserire Username e Password, lanciare un messagio vuoto per uscire dalla registrazione')
+
+                while True:
+                    
                     user = input('Choose a Username >> ')
-                    sys_user = user.lower()
+                    disp = mf.check_disp(user)
+                    if disp:
+                        break
+                    print('Username non disponibile')
+
+                if not user:
+                    break
+
+                while True:
+                    psw = input('Choose a Password >> ')
+                    valid = mf.check_psw(psw)
+                    if valid:
+                        break
+                    print('ERRORE: La password deve essere compresa tra 4 e 16 caratteri')
                 
-                psw = input('Choose a Password >> ')
-                
-                if f.registration(user,psw,r):
+                if mf.registration(user,psw):
                     print('Registration complete: you\'ll be directed to your page')
                     page = 'UserPage'
                     break
@@ -68,14 +77,15 @@ while True:
             else:
                 ui.wrg_cmd()
 
-
+    if not page:
+        break
 
 
     if page == 'UserPage':
         while True:
 
             action = ui.Page(intestazione,comandi,page)   # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
-                                                        # entriamo in un altro ciclo che rappresenta la pagina utente
+                                                          # entriamo in un altro ciclo che rappresenta la pagina utente
 
             if action in ('1','chat'):
                 page = 'ChatPage'
@@ -86,19 +96,18 @@ while True:
                 break
 
             elif action in ('3','dnd'):
-                dnd = r.get(f'DnD:{user}')
+                dnd = f.check_dnd(user)
                 if dnd:
                     print('DnD attualmente attivo')
                 else:
                     print('DnD attualmente non attivo')
                 
-                choice = 'k'
-                while choice not in ('y','n'):
+                while True:
 
                     choice = input('Modificare il proprio stato? [Y/N] ').lower()
 
                     if choice == 'y':
-                        r.set(f'DnD:{user}', not dnd)
+                        f.change_dnd(user)
                         break
 
                     elif choice == 'n':
@@ -112,11 +121,13 @@ while True:
                 while True: 
                     psw = input('Inserisci nuova password >> ')
                     
-                    if len(psw) < 4 or len(psw) > 16:
-                        print('Password non valida, deve essere compresa tra 5 e 16 caratteri')
-                    
+                    valid = mf.check_psw(psw)
+                    if valid:
+                        f.change_psw(user,psw)
+                        break
+                                       
                     else:
-                        r.set()
+                        print('ERRORE: La password deve essere compresa tra 4 e 16 caratteri')
             
             elif action in ('5','logout'):
                 page = 'LandingPage'
@@ -130,16 +141,140 @@ while True:
 
     if page == 'ChatPage':
         while True:
+            o_user = False
             action = page(intestazione,comandi,page)
 
-            if action in ('1','active chats'):
-                # Get_active_Chats
-            elif action in ('2','start new chat'):
+            if action in ('1','start chat'):
+
+                lista = f.GetFriends(user)
+                ui.chats(lista)
+
+                action = input('Con chi vuoi chattare?>> ')
+                
+                if action.isnumeric():
+                    if int(action)< len(lista):
+                        o_user = lista[int(action)]
+                    else:
+                        ui.wrg_cmd()
+                
+                else:
+                    try:
+                        lista.index(action)
+                        o_user = action
+                    except:
+                        ui.wrg_cmd()
+                
+                if o_user:
+
+                    print(f'CHAT CON {o_user}')
+                    print('Invia un messaggio vuoto per uscire dalla chat')
+
+                    values = r.hget(f'Rooms:{user}',o_user)
+
+                    if values:
+                    
+                        values = values.split('::')
+                        room = values[0]
+                        chat = sm.get_chat(values[0],values[1])
+                        new_chat = sm.get_new_msgs(values[0],values[1])
+                        ui.msgs(user,chat)
+                        if new_chat:
+                            print('---- Nuovi Messaggi ----\n')
+                            ui.msgs(user,new_chat)
+
+                    else:
+                        
+                        messaggio = ui.speak(user)
+                        if messaggio:
+                            room = sm.send_message(user,o_user,messaggio)
+                        else:
+                            break
+
+                    event = thr.Event()
+                    event.set()
+
+                    t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event))
+                    t1.start()
+
+                    while True:
+
+                        messaggio = ui.speak(user)
+
+                        if messaggio:                            
+                            sm.send_message(user,o_user,messaggio)
+                        
+                        else:
+                            event.clear()
+                            t1.join()
+                            break                        
 
 
-            elif action in ('3','start timed chat'):
+            elif action in ('2','start timed chat'):
+
+                lista = f.GetFriends(user)
+                ui.chats(lista)
+
+                action = input('Con chi vuoi chattare?>> ')
+                
+                if action.isnumeric():
+                    if int(action)< len(lista):
+                        o_user = lista[int(action)]
+                    else:
+                        ui.wrg_cmd()
+                
+                else:
+                    try:
+                        lista.index(action)
+                        o_user = action
+                    except:
+                        ui.wrg_cmd()
+                
+                if o_user:
+
+                    print(f'CHAT A TEMPO CON {o_user}')
+                    print('Invia un messaggio vuoto per uscire dalla chat')
+
+                    values = r.hget(f'Timed:Rooms:{user}',o_user)
+
+                    if values:
+                    
+                        values = values.split('::')
+                        room = values[0]
+                        chat = sm.get_chat(values[0],values[1])
+                        new_chat = sm.get_new_msgs(values[0],values[1])
+                        ui.msgs(user,chat)
+                        if new_chat:
+                            print('---- Nuovi Messaggi ----\n')
+                            ui.msgs(user,new_chat)
+
+                    else:
+                        
+                        messaggio = ui.speak(user)
+                        if messaggio:
+                            room = sm.send_timed_message(user,o_user,messaggio)
+                        else:
+                            break
+
+                    event = thr.Event()
+                    event.set()
+
+                    t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event))
+                    t1.start()
+
+                    while True:
+
+                        messaggio = ui.speak(user)
+
+                        if messaggio:                            
+                            sm.send_message(user,o_user,messaggio)
+                            sm.set_timer(room)
+                        
+                        else:
+                            event.clear()
+                            t1.join()
+                            break
             
-            elif action in ('4','Indietro'):
+            elif action in ('3','Indietro'):
                 page = 'UserPage'
                 break
 
@@ -149,7 +284,7 @@ while True:
 
 
 
-    if page == 'RubricPage':
+''' if page == 'RubricPage':
         while True:
             action = page(intestazione,comandi,page)
             
@@ -160,4 +295,4 @@ while True:
                 page = 'UserPage'
                 break
             else:
-                ui.wrg_cmd()
+                ui.wrg_cmd()'''

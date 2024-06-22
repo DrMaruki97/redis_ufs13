@@ -1,9 +1,42 @@
 # Questa pagina viene utilizzata per cambiare le impostazioni utente
 
 import streamlit as st
+from Login import streamlit_logout
 
 if 'user' in st.session_state:
-    f"{st.session_state['user']}"
+    st.title('Settings')
+    st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
+    if st.session_state['status'] == '1':
+        st.sidebar.text(f"Do not disturb ⛔")
+    else:
+        st.sidebar.text(f"Available for chat ✔️ ")
+
+
+    logout_button = st.sidebar.button(label='Logout')
+    if logout_button:
+        streamlit_logout()
+        st.switch_page('Login.py')
+    st.write(f"Hello, **{st.session_state['user']}**")
+
+    new_password = st.text_input(label="Choose a new password", placeholder=f'Current password: {st.session_state.r.get("user:"+st.session_state.user)}')
+    DnD = st.toggle("Do not disturb")
+    update_button= st.button("Update", type="primary")
+    if update_button:
+        if new_password:
+            st.session_state.r.set('user:'+st.session_state.user, new_password)
+            st.success('Changed password!')
+        if DnD: 
+            st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
+            st.error('Activated do not disturb.', icon='⛔')
+            st.session_state['status'] = '1'
+
+        else:
+            st.session_state.r.set('dnd:user:'+st.session_state.user, "0")
+            st.success('Set status as available', icon='✔️')
+            st.session_state['status'] = '0'
+
+        
+
 else:
     st.info('Please Login from the Home page and try again.')
-    st.stop()
+    st.switch_page('Login.py')
