@@ -1,6 +1,7 @@
+import redis
 from conn import connect
 
-# Funzione inserimento di nome utente e password
+
 def inserimento():
     while True:
         username = input("Inserisci un nome utente: ")
@@ -9,8 +10,6 @@ def inserimento():
             break
     return [username, pwd]
 
-
-# Funzione di hashing della password
 def hash_password(pwd):
     # Aggiungi un salt fisso
     salt = "42"
@@ -18,9 +17,10 @@ def hash_password(pwd):
     hashed_pwd = hash(pwd + salt)
     return hashed_pwd
 
-
-# Funzione di registrazione utente
+# Creiamo una funzione di registrazione utente
 def signup(lista):
+
+    # Facciamo in modo di non salvare in bianco la password
     username = lista[0]
     if not r.exists(username):
         pwd = lista[1]
@@ -34,10 +34,10 @@ def signup(lista):
 
         # Creiamo istanza redis per id utente
         r.set("id_utente:" + username, id_user)
-        return True
 
 
-# Funzione di login
+
+# Creiamo una funzione di identificazione
 def login(lista):
     username = lista[0]
     pwd = lista[1]
@@ -49,30 +49,24 @@ def login(lista):
 
         if stored_pwd == check_pwd:
             return True
-        return False
+        return login(inserimento())
 
 
-# Funzione aggiunta di un amico in rubrica
+
+# Creiamo una funzione per aggiungere un amico nella rubrica
 def add_friend(user, friend):
     if not r.exists("user:" + friend):
         return False
     else:
         # Se esiste, aggiungiamo l'amico alla rubrica
         r.sadd("rubrica:" + user, friend )
-        return True
 
-
-# Funzione rimozione di un amico dalla rubrica
 def remove_friend(user, friend):
     if not r.exists("user:" + friend):
         return False
     else:
         # Se esiste, rimuoviamo l'amico alla rubrica
         r.scard("rubrica:" + user, friend )
-        return True
-
-
-# Funzione che stampa amici nella rubrica
 def stampa_rubrica(user):
     # Stampiamo la rubrica
     for friend in r.smembers("rubrica:" + user):
