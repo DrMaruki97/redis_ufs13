@@ -5,6 +5,13 @@ from Login import streamlit_logout
 
 if 'user' in st.session_state:
     st.title('Settings')
+    st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
+    if st.session_state['status'] == '1':
+        st.sidebar.text(f"Do not disturb ⛔")
+    else:
+        st.sidebar.text(f"Available for chat ✔️ ")
+
+
     logout_button = st.sidebar.button(label='Logout')
     if logout_button:
         streamlit_logout()
@@ -15,10 +22,21 @@ if 'user' in st.session_state:
     DnD = st.toggle("Do not disturb")
     update_button= st.button("Update", type="primary")
     if update_button:
-        st.session_state.r.set('user:'+st.session_state.user, new_password)
-        st.success('Updated!')
+        if new_password:
+            st.session_state.r.set('user:'+st.session_state.user, new_password)
+            st.success('Changed password!')
+        if DnD: 
+            st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
+            st.error('Activated do not disturb.', icon='⛔')
+            st.session_state['status'] = '1'
+
+        else:
+            st.session_state.r.set('dnd:user:'+st.session_state.user, "0")
+            st.success('Set status as available', icon='✔️')
+            st.session_state['status'] = '0'
+
         
 
 else:
     st.info('Please Login from the Home page and try again.')
-    st.stop()
+    st.switch_page('Login.py')
