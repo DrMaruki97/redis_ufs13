@@ -80,10 +80,10 @@ def manage_friends(user, friend):
         print("L'utente non esiste")
 
 
-"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi
- con un determinato pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room,
-significa che sono amici, viene offerta la possibilità di scegliere la room per iniziare la chat e viene restituita 
-la chiave associata alla room f.e. "room:reactor:davidino" """
+"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi con un determinato
+pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room, significa che sono amici, viene 
+offerta la possibilità di scegliere la room per iniziare la chat e viene restituita la chiave associata alla room 
+f.e. "room:reactor:davidino" """
 
 
 def select_friend(user):
@@ -118,37 +118,28 @@ def select_user(user):
     except Exception as e:
         return False, print("Hai inserito un numero non valido")
 
-""" CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
-def timed_chat(user, friend, duration_chat):
-    if r.exists("room:"+user+":"+friend):
-        duration_chat = int(input("Inserisci la durata della chat: "))
-        r.expire("room:"+user+":"+friend, time=duration_chat)
-        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi}")
-
-
-
 
 # Le prossime sono da sistemare perchè userei una bitmap(forse dovremmo reintrodurre gli id)
 
 '''Funziona che controlla lo stato DnD di un utente (che dobbiamo aver creato e settato a 0 durante la registrazione/ settato a 0
 durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 
-"""Siate liberi di testare"""
-r = connect()
-select_user("reactor")
 
-def check_dnd(user):
-    dnd = r.get(f'DnD:{user}')
+def check_dnd(user_id):
+    dnd = r.getbit('sys:dnd',user_id)
     return dnd
 
 
-def change_dnd(user,dnd):
-    try:
-        if dnd:
-            r.set(f'DnD:{user}',0)
-        else:
-            r.set(f'DnD:{user}',1)
-        return True
-    except:
-        return False
+def change_dnd(user_id,dnd):
+    r.setbit('sys:dnd',user_id,not dnd)
 
+
+def ActiveChats(user):
+    diz = r.hgetall(f'Rooms:{user}')
+    return diz
+    
+
+
+'''Siate liberi di testare'''
+#r = connect() 
+#select_user("reactor")
