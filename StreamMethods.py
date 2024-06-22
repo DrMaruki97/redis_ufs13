@@ -1,0 +1,58 @@
+import redis
+
+
+'''Metodo di invio di messaggi, prima controlla se esiste già lo stream della chat. Se presente aggiunge solo il messaggio,
+altrimenti crea una voce nelle hash dei due utenti che ha come chiave il nome dell'altro utente (rispetto al proprietario dell'hash)
+e come valore la stringa <nome stream>::<id dell'ultimo messaggio letto> (nel caso del ricevente questo primo messaggio l'ultimo 
+messaggio letto non esiste e quindi è 0)'''
+def send_message(user,o_user,room,message:dict):
+
+    if not room:
+
+        room = f'Room:{user}:{o_user}'
+        msg_id = r.xadd(f'{room}',message)
+        r.hset(f'Rooms:{user}',f'{o_user}',f'{room}::{msg_id}')
+        r.hset(f'Rooms:{o_user}',f'{user}',f'{room}::0')
+
+    else:
+
+        r.xadd(f'{room}',message)
+
+
+
+'''Metodo da far girare in un thread separato, continua a fare polling allo stream per nuovi messaggi e se li trova li printa e 
+modifica l'hash dell'ascoltatore segnando l'id di quel messaggio come ultimo letto di quella chat'''
+
+def eavesdropping(room,user,o_user):
+    r_msgs = []
+    while True:
+
+        if r_msgs:
+            msgs = r_msgs[0][1]
+            for el in msgs:
+                last_id = el[0]
+                msg = el[1]
+                if msg['mittente'] == user:
+                    mitt = '>'
+                else:
+                    mitt = '<'
+                print(f'{mitt} {msg['messaggio']}\t{msg['datetime']}')
+            r.hset(f'Rooms:{user}',f'{o_user}',f'{room}::{last_id}')
+
+        r_msgs = r.xread(streams={room:'$'})
+
+
+'''Metodi da lanciare durante l'inizializzazione della chat per ottenere tutti i messaggi già visti (get_chat) e tutti i messagi
+inviati dall'altro utente mentre noi non eravamo connessi (get_new_msgs). la parte di "printing" della chat è gestita da altre funzioni'''
+
+def get_chat(room,last_id):
+    chat = r.xrange(f'{room}','-',f'{last_id}')
+    return chat
+    
+
+def get_new_msgs(room,last_id,user,o_user):
+    chat = r.xrange(f'{room}',f'({last_id}','+')
+    if chat:
+        last_id = chat[-1][0]
+        r.hset(f'Rooms:{user}',o_user,last_id)
+    return chat
