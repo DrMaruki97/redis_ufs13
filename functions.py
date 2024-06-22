@@ -131,16 +131,16 @@ durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 
 
 
-def check_dnd(user_id):
-    dnd = r.getbit('sys:DnD',user_id)
+def check_dnd(user):
+    dnd = r.get(f'DnD:{user}')
     return dnd
 
 
-def change_dnd(user_id,dnd):
+def change_dnd(user,dnd):
     if dnd:
-        r.setbit('sys:DnD',user_id,0)
+        r.set(f'DnD:{user}',0)
     else:
-        r.setbit('sys:DnD',user_id,1)
+        r.set(f'DnD:{user}',1)
 
 
 def GetFriends(user):
