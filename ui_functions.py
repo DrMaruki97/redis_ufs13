@@ -12,11 +12,9 @@ def wrg_cmd():
     print('Comando non valido')
 
 
-def chats(diz):
-    lista = list(diz.keys())
+def chats(lista):
     for i in range(len(lista)):
         print(f'{i+1}  {lista[i]}')
-    return lista
 
 
 def msgs(user,messaggi:list):
@@ -32,5 +30,8 @@ def msgs(user,messaggi:list):
 
 def speak(user):
     messaggio = input('>> ')
-    date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    return {'mittente':user,'messaggio':messaggio,'datetime':date}
+    if messaggio:
+        date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return {'mittente':user,'messaggio':messaggio,'datetime':date}
+    else:
+        return False
