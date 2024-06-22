@@ -80,10 +80,10 @@ def manage_friends(user, friend):
         print("L'utente non esiste")
 
 
-"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi con un determinato
-pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room, significa che sono amici, viene 
-offerta la possibilità di scegliere la room per iniziare la chat e viene restituita la chiave associata alla room 
-f.e. "room:reactor:davidino" """
+"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi
+ con un determinato pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room,
+significa che sono amici, viene offerta la possibilità di scegliere la room per iniziare la chat e viene restituita 
+la chiave associata alla room f.e. "room:reactor:davidino" """
 
 
 def select_friend(user):
@@ -119,11 +119,7 @@ def select_user(user):
 
 
 
-
-
-
-
-
 """Siate liberi di testare"""
 r = connect()
 select_user("reactor")
+
