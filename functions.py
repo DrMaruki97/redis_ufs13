@@ -119,27 +119,11 @@ def select_user(user):
         return False, print("Hai inserito un numero non valido")
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
-def timed_chat(user, friend):
+def timed_chat(user, friend, duration_chat):
     if r.exists("room:"+user+":"+friend):
-        print("Scegli quando far durare la chat a scomparsa: ")
-        print("Scegli 1 : 10 minuti")
-        print("Scegli 2 : 30 minuti")
-        print("Scegli 3 : 1 ora")
-        scelta_durata = int(input("Inserisci un numero da 1 a 3: "))
-
-        if scelta_durata == "1":
-            durata_chat = 10 * 60
-        elif scelta_durata == "2":
-            durata_chat = 30 * 60
-        elif scelta_durata == "3":
-            durata_chat = 60 * 60
-        else:
-            return False
-
-        r.expire("room:"+user+":"+friend, time=durata_chat)
-        print(f"La chat è iniziata e sarà disponibile per {durata_chat/60} secondi")
-    else:
-        return False
+        duration_chat = int(input("Inserisci la durata della chat: "))
+        r.expire("room:"+user+":"+friend, time=duration_chat)
+        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
 
 
 
@@ -153,18 +137,13 @@ durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 r = connect()
 select_user("reactor")
 
-def check_dnd(user):
-    dnd = r.get(f'DnD:{user}')
+def check_dnd(user_id):
+    dnd = r.getbit('sys:DnD',user_id)
     return dnd
 
 
-def change_dnd(user,dnd):
-    try:
-        if dnd:
-            r.set(f'DnD:{user}',0)
-        else:
-            r.set(f'DnD:{user}',1)
-        return True
-    except:
-        return False
-
+def change_dnd(user_id,dnd):
+    if dnd:
+        r.setbit('sys:DnD',user_id,0)
+    else:
+        r.setbit('sys:DnD',user_id,1)
