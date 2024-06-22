@@ -143,9 +143,9 @@ def change_dnd(user_id,dnd):
         r.setbit('sys:DnD',user_id,1)
 
 
-def ActiveChats(user):
-    chats = r.hgetall(f'Rooms:{user}')
-    return chats
+def GetFriends(user):
+    friends = r.get(f'Friends:{user}')
+    return friends
 
 
 
