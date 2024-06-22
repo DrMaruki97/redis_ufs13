@@ -80,10 +80,10 @@ def manage_friends(user, friend):
         print("L'utente non esiste")
 
 
-"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi con un determinato
-pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room, significa che sono amici, viene 
-offerta la possibilità di scegliere la room per iniziare la chat e viene restituita la chiave associata alla room 
-f.e. "room:reactor:davidino" """
+"""STAMPA LISTA CONTATTI e INIZIALIZZARE CHAT: Viene usato SCAN molto più efficiente di smembers o keys, cerca le chiavi
+ con un determinato pattern, in questo caso il pattern delle chat: "room:user1:user2" se esiste la room,
+significa che sono amici, viene offerta la possibilità di scegliere la room per iniziare la chat e viene restituita 
+la chiave associata alla room f.e. "room:reactor:davidino" """
 
 
 def select_friend(user):
@@ -124,6 +124,9 @@ def select_user(user):
 '''Funziona che controlla lo stato DnD di un utente (che dobbiamo aver creato e settato a 0 durante la registrazione/ settato a 0
 durante un login) e ritorna la variabile dnd che avrà valore 0\\1'''
 
+"""Siate liberi di testare"""
+r = connect()
+select_user("reactor")
 
 def check_dnd(user):
     dnd = r.get(f'DnD:{user}')
@@ -140,7 +143,3 @@ def change_dnd(user,dnd):
     except:
         return False
 
-
-'''Siate liberi di testare'''
-#r = connect()
-#select_user("reactor")
