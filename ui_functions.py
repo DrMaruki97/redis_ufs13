@@ -1,4 +1,5 @@
-import redis
+import datetime as dt
+import StreamMethods as sm
 
 def Page(page):
     print(intestazione)
@@ -11,9 +12,26 @@ def wrg_cmd():
     print('Comando non valido')
 
 
-def chats(diz):
-    lista = list(diz.keys())
+def chats(lista):
     for i in range(len(lista)):
         print(f'{i+1}  {lista[i]}')
-    return lista
-    
+
+
+def msgs(user,messaggi:list):
+    if messaggi:
+        for el in messaggi:
+            msg = el[1]
+            if msg['mittente'] == user:
+                mitt = '>'
+            else:
+                mitt = '<'
+            print(f'{mitt} {msg['messaggio']}\t{msg['datetime']}')
+
+
+def speak(user):
+    messaggio = input('>> ')
+    if messaggio:
+        date = dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return {'mittente':user,'messaggio':messaggio,'datetime':date}
+    else:
+        return False
