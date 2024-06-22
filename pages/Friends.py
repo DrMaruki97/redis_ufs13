@@ -22,7 +22,8 @@ friends = []
 
 if not friends:
     st.write('***Your current friendlist:***')
-    'It seems like you have no friends, just like in real life. 😂' 
+    'It seems like you have no friends, just like in real life.'
+    st.image(image='pages/pepecry.png')
 else:
     friends
 
