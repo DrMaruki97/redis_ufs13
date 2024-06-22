@@ -119,11 +119,27 @@ def select_user(user):
         return False, print("Hai inserito un numero non valido")
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
-def timed_chat(user, friend, duration_chat):
+def timed_chat(user, friend):
     if r.exists("room:"+user+":"+friend):
-        duration_chat = int(input("Inserisci la durata della chat: "))
-        r.expire("room:"+user+":"+friend, time=duration_chat)
-        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi}")
+        print("Scegli quando far durare la chat a scomparsa: ")
+        print("Scegli 1 : 10 minuti")
+        print("Scegli 2 : 30 minuti")
+        print("Scegli 3 : 1 ora")
+        scelta_durata = int(input("Inserisci un numero da 1 a 3: "))
+
+        if scelta_durata == "1":
+            durata_chat = 10 * 60
+        elif scelta_durata == "2":
+            durata_chat = 30 * 60
+        elif scelta_durata == "3":
+            durata_chat = 60 * 60
+        else:
+            return False
+
+        r.expire("room:"+user+":"+friend, time=durata_chat)
+        print(f"La chat è iniziata e sarà disponibile per {durata_chat/60} secondi")
+    else:
+        return False
 
 
 
