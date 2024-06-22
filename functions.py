@@ -123,7 +123,7 @@ def timed_chat(user, friend, duration_chat):
     if r.exists("room:"+user+":"+friend):
         duration_chat = int(input("Inserisci la durata della chat: "))
         r.expire("room:"+user+":"+friend, time=duration_chat)
-        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi}")
+        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
 
 
 
