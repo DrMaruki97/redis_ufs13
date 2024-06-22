@@ -3,7 +3,7 @@ from functions import connect
 import redis
 
 st.set_page_config(
-    page_title="Homepage",
+    page_title="Login",
     page_icon="🔥",
 )
 
@@ -24,6 +24,7 @@ def streamlit_logout():
     del st.session_state['user']
 
 r = connect()
+st.session_state['r'] = r
 
 
 st.title('🔥 :red[Red]Chat 💬')
@@ -65,7 +66,4 @@ if 'user' not in st.session_state:
 
 if 'user' in st.session_state:
     st.empty()
-    st.write(f"Hello, {st.session_state['user']}")
-    logout_button = st.button(label='logout')
-    if logout_button:
-        streamlit_logout()
+    st.switch_page('pages/Friends.py')
