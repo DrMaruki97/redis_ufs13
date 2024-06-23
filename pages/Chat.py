@@ -4,6 +4,10 @@ import time
 from Login import streamlit_logout
 
 
+a = time.strftime("%d/%m/%Y, %H:%M -")
+a
+
+
 
 if 'user' in st.session_state:
     st.sidebar.text(f"Currently logged in as {st.session_state['user']}")

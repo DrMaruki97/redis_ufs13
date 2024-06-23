@@ -1,6 +1,11 @@
 import streamlit as st
 from Login import streamlit_logout
 import pandas as pd
+import time
+
+def userList(pattern):
+    # mi serve una lista di username per il widget della ricerca
+    return [key[5:] for key in st.session_state.r.scan_iter(f'user:{pattern}*')]
 
 if 'user' in st.session_state:
 # Se l'utente è loggato:
@@ -53,24 +58,27 @@ st.divider()
 # una linea ------------
 
 st.title('Add a friend')
-friend = st.text_input(label='Type your friend username')
+default_label = 'Type of your friend username'
+friend = st.text_input(label=default_label)
 add_button = st.button(label='Add a friend')
+search_button = st.button(label='Search')
 # Roba per aggiungere gli amici 
+if search_button and friend:
+    st.title('Search results')
+    resultList = userList(pattern=friend)
+    [st.write(key) for key in userList(pattern=friend) if key != st.session_state.user]
 if add_button:
     if st.session_state.r.exists('user:'+friend):
         st.session_state.r.hset(f"st:friendList:{st.session_state.user}", friend, 'temp')
         friends = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
         friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
-        st.success(f'Added {friend}')
+        st.success(f'Great! You added {friend}')
+        st.image('pages/pepedance.gif')
+        time.sleep(1)
         st.rerun()
         # Se viene schiacciato il pulsante per aggiungere un amico viene controllato se quell'utente esiste effetivamente. 
         # Se esiste viene aggiunto nella hash lista amici
 
     else: 
         st.error("User simply ain't there buddy")
-
-
-
-
-
 
