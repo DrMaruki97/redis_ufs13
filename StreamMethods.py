@@ -40,7 +40,7 @@ def eavesdropping(room,user,o_user,event):
                     mitt = '>'
                 else:
                     mitt = '<'
-                print(f'{mitt} {msg['messaggio']}\t{msg['datetime']}')
+                print(mitt, msg['messaggio'], msg['datetime'])
             r.hset(f'Rooms:{user}',f'{o_user}',f'{room}::{last_id}')
 
         r_msgs = r.xread(streams={room:'$'})
