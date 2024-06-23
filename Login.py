@@ -1,5 +1,5 @@
 import streamlit as st
-import redis 
+import redis
 
 st.set_page_config(
     page_title="Login",
@@ -65,6 +65,8 @@ if 'user' not in st.session_state:
     #Se invece l'utente preferisce registrarsi...
     if not r.exists('user:'+username):
         r.set("user:"+ username, password)
+        r.incrby("sys:id_user", 1)
+        r.set(f"id_usr:{username}", r.get("sys:id_user"))
         f"Congratulations, {username}. You're in."
         st.session_state['user'] = username
         st.switch_page('pages/Friends.py')
@@ -77,3 +79,4 @@ if 'user' in st.session_state:
     st.empty()
     st.switch_page('pages/Friends.py')
 # Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
+

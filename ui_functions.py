@@ -12,7 +12,7 @@ def wrg_cmd():
     print('Comando non valido')
 
 
-def chats(lista):
+def view_list(lista):
     for i in range(len(lista)):
         print(f'{i+1}  {lista[i]}')
 

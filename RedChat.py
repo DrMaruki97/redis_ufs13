@@ -5,12 +5,12 @@ import StreamMethods as sm
 import threading as thr
 import myfunctions as mf
 
-r = f.connect()    # Uso la funzione di Davide per stabilire la connessione
+r = mf.connect()    # Uso la funzione di Davide per stabilire la connessione
 
 comandi = {'LandingPage':['Login','Registration','Exit'],                   # Una lista di comandi, va data in argomento alle pagine
-           'UserPage':['Chat','Rubrica','DnD','Change Password'],           # per stampare a schermo tutti i comandi che l'utente può
-           'ChatPage':['Start chat','Start timed chat','Indietro'],         # chiamare in una determinata pagina
-           'RubricPage':['Vedi Rubrica','Aggiungi contatto','Rimuovi contatto']
+           'UserPage':['Chat','Rubrica','DnD','Change Password','Logout'],  # per stampare a schermo tutti i comandi che l'utente può
+           'ChatPage':['Start chat','Start timed chat','Home'],             # chiamare in una determinata pagina
+           'RubricPage':['Aggiungi contatto','Rimuovi contatto','Home']
             }
 
 intestazione = '='*11+'\n  REDCHAT  \n'+'='*11          # Semplice intestazione, va data in argomento alle pagine
@@ -25,7 +25,7 @@ while True:                                             # Ciclo totale del progr
     if page == 'LandingPage':
 
         while True:                                      # Ciclo per mantenere il programma attivo, all'interno richiedo il comando
-            ui.Page(intestazione,comandi,page)           # all'utente, per poi dividere il flusso in base al comando
+            ui.page(intestazione,comandi,page)           # all'utente, per poi dividere il flusso in base al comando
             
             action = ui.action()
 
@@ -34,7 +34,7 @@ while True:                                             # Ciclo totale del progr
                 user = input('Username >> ')
                 psw = input('Password >> ')
                 
-                if mf.login(user,psw):
+                if mf.login(user,psw,r):
                     page = 'UserPage'
                     break
                 
@@ -48,7 +48,7 @@ while True:                                             # Ciclo totale del progr
                 while True:
                     
                     user = input('Choose a Username >> ')
-                    disp = mf.check_disp(user)
+                    disp = mf.check_disp(user,r)
                     if disp:
                         break
                     print('Username non disponibile')
@@ -63,7 +63,7 @@ while True:                                             # Ciclo totale del progr
                         break
                     print('ERRORE: La password deve essere compresa tra 4 e 16 caratteri')
                 
-                if mf.registration(user,psw):
+                if mf.registration(user,psw,r):
                     print('Registration complete: you\'ll be directed to your page')
                     page = 'UserPage'
                     break
@@ -85,7 +85,7 @@ while True:                                             # Ciclo totale del progr
     if page == 'UserPage':
         while True:
 
-            ui.Page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
+            ui.page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
                                                           # entriamo in un altro ciclo che rappresenta la pagina utente
             action = ui.action()
 
@@ -125,7 +125,7 @@ while True:                                             # Ciclo totale del progr
                     
                     valid = mf.check_psw(psw)
                     if valid:
-                        f.change_psw(user,psw)
+                        f.change_psw(user,psw,r)
                         break
                                        
                     else:
@@ -149,8 +149,8 @@ while True:                                             # Ciclo totale del progr
 
             if action in ('1','start chat'):
 
-                lista = f.GetFriends(user)
-                ui.chats(lista)
+                lista = mf.get_friends(user)
+                ui.view_list(lista)
 
                 action = input('Con chi vuoi chattare?>> ')
                 
@@ -172,7 +172,7 @@ while True:                                             # Ciclo totale del progr
                     print(f'CHAT CON {o_user}')
                     print('Invia un messaggio vuoto per uscire dalla chat')
 
-                    values = r.hget(f'Rooms:{user}',o_user)
+                    values = r.hget(f'User:{user}',o_user)
 
                     if values:
                     
@@ -190,6 +190,7 @@ while True:                                             # Ciclo totale del progr
                         messaggio = ui.speak(user)
                         if messaggio:
                             room = sm.send_message(user,o_user,messaggio)
+                            print(f'> {messaggio['messaggio']}\t{messaggio['datetime']}')
                         else:
                             break
 
@@ -277,7 +278,7 @@ while True:                                             # Ciclo totale del progr
                             t1.join()
                             break
             
-            elif action in ('3','Indietro'):
+            elif action in ('3','home'):
                 page = 'UserPage'
                 break
 
@@ -287,15 +288,44 @@ while True:                                             # Ciclo totale del progr
 
 
 
-''' if page == 'RubricPage':
+    if page == 'RubricPage':
         while True:
-            action = page(intestazione,comandi,page)
+            ui.page(intestazione,comandi,page)
+            action = ui.action()
             
-            if action in ('1','vedi rubrica'):
-            elif action in ('2','aggiungi contatto'):
-            elif action in ('3','rimuovi contatto'):
-            elif action in ('4','Indietro'):
+            if action in ('1','aggiungi contatto'):
+                print('Ricerca username,anche parziale')
+
+                ricerca = ui.action()
+                utenti = mf.user_serch(ricerca,r)
+                ui.view_list(utenti)
+
+                selezione = ui.action()
+
+                if action.isnumeric():
+                    if int(action)< len(utenti):
+                        friend = utenti[int(action)]
+                    else:
+                        ui.wrg_cmd()
+                
+                else:
+                    try:
+                        utenti.index(action)
+                        friend = action
+                    except:
+                        ui.wrg_cmd()
+                
+                if friend:
+                    
+                    mf.add_friend(friend)
+
+
+            elif action in ('2','rimuovi contatto'):
+                print('n\'altra volta')
+            elif action in ('3','home'):
                 page = 'UserPage'
                 break
             else:
-                ui.wrg_cmd()'''
+                ui.wrg_cmd()
+
+print('Grazie e arrivederci')
