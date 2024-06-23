@@ -5,7 +5,7 @@ import StreamMethods as sm
 import threading as thr
 import myfunctions as mf
 
-r = f.connect()    # Uso la funzione di Davide per stabilire la connessione
+r = mf.connect()    # Uso la funzione di Davide per stabilire la connessione
 
 comandi = {'LandingPage':['Login','Registration','Exit'],                   # Una lista di comandi, va data in argomento alle pagine
            'UserPage':['Chat','Rubrica','DnD','Change Password','Logout'],  # per stampare a schermo tutti i comandi che l'utente può
