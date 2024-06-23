@@ -29,28 +29,28 @@ def hash_pwd(pwd):
 
 def start_form():
     while True:
-        username = input("Inserisci il tuo username: ")  # Io dividerei le due funzionalità
+        username = input("Inserisci il tuo username: ")
         pwd = input("Inserisci la password: ")
         if 4 < len(pwd) < 17 and len(username) < 20:
             break
     return username, pwd
 
 
-def sign_up(username, pwd):
-    if not r.exists(f"user:+{username.lower()}"):
-        c = r.set("user:" + username, hash_pwd(pwd))
+def sign_up(username, pwd,r):
+    if not r.exists(f"user:{username.lower()}"):
+        c = r.set(f"user:{username.lower()}", hash_pwd(pwd))
         if c:
-            r.incrby("sys:id_user", 1)
-            c = r.set(f"id_usr:+{username}", r.get("sys:id_user"))
+            id = r.incrby("sys:id_user", 1)
+            c = r.set(f"id_usr:{username}", id)
     else:
         return False  # utente già esistente
     return c   # True o False in base all'esito della set dell'id
 
 
-def login(username, pwd):
-    if r.exists(f"user:+{username.lower()}"):
+def login(username, pwd,r):
+    if r.exists(f"user:{username.lower()}"):
         if hash_pwd(pwd) == r.get("user:" + username.lower()):
-            return True, r.get(f"id_usr:+{username}"), username  # se login ha successo, restituisce true e id e usrname
+            return True, r.get(f"id_usr:{username}"), username  # se login ha successo, restituisce true e id e usrname
         else:
             return False  # pwd sbagliata
     else:
@@ -104,3 +104,8 @@ def timed_chat(user, friend, duration_chat):
         r.zadd(f"t_room:{user}:{friend}")
         r.expire(f"t_room:{user}:{friend}", time=duration_chat)
         print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
+
+
+def change_psw(user,psw,r):
+    return r.set(user.lower(),hash_pwd(psw))
+        
