@@ -296,20 +296,20 @@ while True:                                             # Ciclo totale del progr
                 print('Ricerca username,anche parziale')
 
                 ricerca = ui.action()
-                utenti = mf.user_serch(ricerca)
+                utenti = mf.user_serch(ricerca,r)
                 ui.view_list(utenti)
 
                 selezione = ui.action()
 
                 if action.isnumeric():
-                    if int(action)< len(lista):
-                        friend = lista[int(action)]
+                    if int(action)< len(utenti):
+                        friend = utenti[int(action)]
                     else:
                         ui.wrg_cmd()
                 
                 else:
                     try:
-                        lista.index(action)
+                        utenti.index(action)
                         friend = action
                     except:
                         ui.wrg_cmd()
