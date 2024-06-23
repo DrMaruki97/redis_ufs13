@@ -289,7 +289,7 @@ while True:                                             # Ciclo totale del progr
 
     if page == 'RubricPage':
         while True:
-            page(intestazione,comandi,page)
+            ui.page(intestazione,comandi,page)
             action = ui.action()
             
             if action in ('1','aggiungi contatto'):
