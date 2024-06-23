@@ -1,6 +1,13 @@
 import redis
 
-
+def connect():
+    r = redis.Redis(
+    host='redis-11492.c300.eu-central-1-1.ec2.redns.redis-cloud.com',
+    port=11492,
+    password='0ssFnSEhNJ6Hn7JVtznKkpOuAD1ffdtR',
+    decode_responses=True
+    )
+    return r
 
 def login(user,psw,r):
     if psw == r.get(user.lower()):
