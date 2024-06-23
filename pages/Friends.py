@@ -67,6 +67,9 @@ if search_button and friend:
     st.title('Search results')
     resultList = userList(pattern=friend)
     [st.write(key) for key in userList(pattern=friend) if key != st.session_state.user]
+    if len(resultList)==0:
+        st.write('There are no users by that name.')
+        st.image('pages/pepewhat.png')
 if add_button:
     if st.session_state.r.exists('user:'+friend):
         st.session_state.r.hset(f"st:friendList:{st.session_state.user}", friend, 'temp')
