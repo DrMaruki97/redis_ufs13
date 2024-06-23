@@ -25,8 +25,9 @@ while True:                                             # Ciclo totale del progr
     if page == 'LandingPage':
 
         while True:                                      # Ciclo per mantenere il programma attivo, all'interno richiedo il comando
-            action = ui.Page(intestazione,comandi,page)  # all'utente, per poi dividere il flusso in base al comando
+            ui.Page(intestazione,comandi,page)           # all'utente, per poi dividere il flusso in base al comando
             
+            action = ui.action()
 
             if action in ('1','login'):
                 
@@ -84,8 +85,9 @@ while True:                                             # Ciclo totale del progr
     if page == 'UserPage':
         while True:
 
-            action = ui.Page(intestazione,comandi,page)   # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
+            ui.Page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
                                                           # entriamo in un altro ciclo che rappresenta la pagina utente
+            action = ui.action()
 
             if action in ('1','chat'):
                 page = 'ChatPage'
@@ -142,7 +144,8 @@ while True:                                             # Ciclo totale del progr
     if page == 'ChatPage':
         while True:
             o_user = False
-            action = page(intestazione,comandi,page)
+            ui.page(intestazione,comandi,page)
+            action = ui.action()
 
             if action in ('1','start chat'):
 
