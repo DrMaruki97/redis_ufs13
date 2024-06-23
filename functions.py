@@ -37,20 +37,20 @@ def start_form():
 
 
 def sign_up(username, pwd):
-    if not r.exists(f"user:+{username.lower()}"):
-        c = r.set("user:" + username, hash_pwd(pwd))
+    if not r.exists(f"user:{username.lower()}"):
+        c = r.set(f"user:{username}", hash_pwd(pwd))
         if c:
             r.incrby("sys:id_user", 1)
-            c = r.set(f"id_usr:+{username}", r.get("sys:id_user"))
+            c = r.set(f"id_usr:{username}", r.get("sys:id_user"))
     else:
         return False  # utente già esistente
     return c   # True o False in base all'esito della set dell'id
 
 
 def login(username, pwd):
-    if r.exists(f"user:+{username.lower()}"):
-        if hash_pwd(pwd) == r.get("user:" + username.lower()):
-            return True, r.get(f"id_usr:+{username}"), username  # se login ha successo, restituisce true e id e usrname
+    if r.exists(f"user:{username.lower()}"):
+        if str(hash_pwd(pwd)) == r.get(f"user:{username.lower()}"):
+            return True, r.get(f"id_usr:{username}"), username  # se login ha successo, restituisce true e id e usrname
         else:
             return False  # pwd sbagliata
     else:
@@ -104,3 +104,6 @@ def timed_chat(user, friend, duration_chat):
         r.zadd(f"t_room:{user}:{friend}")
         r.expire(f"t_room:{user}:{friend}", time=duration_chat)
         print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
+
+
+
