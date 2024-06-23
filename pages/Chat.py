@@ -5,9 +5,7 @@ from Login import streamlit_logout
 
 
 a = time.strftime("%d/%m/%Y, %H:%M -")
-a
-
-
+#a
 
 if 'user' in st.session_state:
     st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
@@ -24,8 +22,23 @@ else:
     st.switch_page('Login.py')
 
 st.title('Chat')
-selection = st.selectbox(label='Select who you wanna chat with.', options=['AI', 'Hoomanz'])
 
+# Recupero la lista di amici in modo da poter selezionare le chat.
+friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
+# friendList
+selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
+if not selection:
+    'Seleziona un amico per iniziare a chattare.'
+if selection:
+    messages = st.session_state.r.zrange(f"st:room:{friendList[selection]}", 0, 1, withscores=True)
+    messages = list(messages)
+    messages = [list(message) for message in messages]
+    # Sto ambaradam serve a recuperare i messaggi e ad averli in maniera leggibile, perchè quello scemo di zrange mi fa tornare una tupla di tuple
+
+    for message in messages:
+        with st.chat_message(message[0].split(':')[0]):
+            mess = st.markdown(f"{str(int(message[1]))}: "+message[0].split(':')[1])
+            #mess = st.markdown(f"{}")
 
 # Tutorial
 # https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps#build-a-simple-chatbot-gui-with-streaming
@@ -49,20 +62,21 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Display chat messages from history on app rerun
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+#for message in st.session_state.messages:
+ #   with st.chat_message(message["role"]):
+  #      st.markdown(message["content"])
 
 # Accept user input
 if prompt := st.chat_input("What is up my man?"):
+    pass
     # Add user message to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+   # st.session_state.messages.append({"role": "user", "content": prompt})
     # Display user message in chat message container
-    with st.chat_message("user"):
-        st.markdown(f"***{st.session_state['user']}*** "+prompt)
+  #  with st.chat_message("user"):
+   #     st.markdown(f"***{st.session_state['user']}*** "+prompt)
 
     # Display assistant response in chat message container
-    with st.chat_message(selection):
-        response = st.write_stream(response_generator())
+ #   with st.chat_message(selection):
+   #     response = st.write_stream(response_generator())
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": selection, "content": response})
+   # st.session_state.messages.append({"role": selection, "content": response})
