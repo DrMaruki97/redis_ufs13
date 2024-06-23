@@ -172,7 +172,7 @@ while True:                                             # Ciclo totale del progr
                     print(f'CHAT CON {o_user}')
                     print('Invia un messaggio vuoto per uscire dalla chat')
 
-                    values = r.hget(f'Rooms:{user}',o_user)
+                    values = r.hget(f'User:{user}',o_user)
 
                     if values:
                     
@@ -190,6 +190,7 @@ while True:                                             # Ciclo totale del progr
                         messaggio = ui.speak(user)
                         if messaggio:
                             room = sm.send_message(user,o_user,messaggio)
+                            print(f'> {messaggio['messaggio']}\t{messaggio['datetime']}')
                         else:
                             break
 
