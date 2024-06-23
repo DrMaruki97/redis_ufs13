@@ -1,7 +1,7 @@
 import datetime as dt
 import StreamMethods as sm
 
-def Page(page):
+def page(intestazione,comandi,page):
     print(intestazione)
     for i in range(len(comandi[page])):
         print(f'{i+1}. {comandi[page][i]}')
@@ -35,3 +35,7 @@ def speak(user):
         return {'mittente':user,'messaggio':messaggio,'datetime':date}
     else:
         return False
+
+def action():
+    action = input('>> ').lower()
+    return action
