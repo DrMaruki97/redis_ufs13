@@ -2,6 +2,7 @@
 
 import streamlit as st
 from Login import streamlit_logout
+import time
 
 if 'user' in st.session_state:
     st.title('Settings')
@@ -32,22 +33,26 @@ if 'user' in st.session_state:
             st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
             st.error('Activated do not disturb.', icon='⛔')
             st.session_state['status'] = '1'
+            time.sleep(1)
             st.rerun()
         elif new_password:
             st.session_state.r.set('user:'+st.session_state.user, new_password)
             st.success('Changed password!')
+            time.sleep(1)
             st.rerun()
 
         elif DnD: 
             st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
             st.error('Activated do not disturb.', icon='⛔')
             st.session_state['status'] = '1'
+            time.sleep(1)
             st.rerun()
 
         else:
             st.session_state.r.set('dnd:user:'+st.session_state.user, "0")
             st.success('Set status as available', icon='✔️')
             st.session_state['status'] = '0'
+            time.sleep(1)
             st.rerun()
 
         
