@@ -149,14 +149,14 @@ while True:                                             # Ciclo totale del progr
 
             if action in ('1','start chat'):
 
-                lista = mf.get_friends(user)
+                lista = mf.get_friends(user,r)
                 ui.view_list(lista)
 
                 action = input('Con chi vuoi chattare?>> ')
                 
                 if action.isnumeric():
-                    if int(action)< len(lista):
-                        o_user = lista[int(action)]
+                    if int(action) <= len(lista):
+                        o_user = lista[int(action)-1]
                     else:
                         ui.wrg_cmd()
                 
@@ -174,7 +174,7 @@ while True:                                             # Ciclo totale del progr
 
                     values = r.hget(f'User:{user}',o_user)
 
-                    if values:
+                    if values != '0':
                     
                         values = values.split('::')
                         room = values[0]
@@ -189,7 +189,7 @@ while True:                                             # Ciclo totale del progr
                         
                         messaggio = ui.speak(user)
                         if messaggio:
-                            room = sm.send_message(user,o_user,messaggio)
+                            room = sm.send_message(user,o_user,r,messaggio)
                             print(f'> {messaggio['messaggio']}\t{messaggio['datetime']}')
                         else:
                             break
@@ -197,7 +197,7 @@ while True:                                             # Ciclo totale del progr
                     event = thr.Event()
                     event.set()
 
-                    t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event))
+                    t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event,r))
                     t1.start()
 
                     while True:
@@ -205,7 +205,7 @@ while True:                                             # Ciclo totale del progr
                         messaggio = ui.speak(user)
 
                         if messaggio:                            
-                            sm.send_message(user,o_user,messaggio)
+                            sm.send_message(user,o_user,r,messaggio)
                         
                         else:
                             event.clear()
@@ -303,8 +303,8 @@ while True:                                             # Ciclo totale del progr
                 selezione = ui.action()
 
                 if action.isnumeric():
-                    if int(action)< len(utenti):
-                        friend = utenti[int(action)]
+                    if int(action)<= len(utenti):
+                        friend = utenti[int(action)-1]
                     else:
                         ui.wrg_cmd()
                 
@@ -317,7 +317,7 @@ while True:                                             # Ciclo totale del progr
                 
                 if friend:
                     
-                    mf.add_friend(friend)
+                    mf.add_friend(user,friend,r)
 
 
             elif action in ('2','rimuovi contatto'):
