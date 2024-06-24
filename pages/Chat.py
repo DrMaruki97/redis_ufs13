@@ -11,7 +11,7 @@ def pushMessagesInSession(idroom:str):
     #Non potendo utilizzare i JSON su redis devo ricreare qualcosa di simile con Python
     # Ogni messaggio deve essere messages = [{timestamp:43499490, mittente:'pippo',messaggio:'ciao'},...]
 
-    messages = st.session_state.r.zrange(f"st:room:{idroom}", 0, -1, withscores=True)
+    messages = st.session_state.r.zrange(f"room:{idroom}", 0, -1, withscores=True)
     #hgetall è MOLTO strano. Restituisce una lista di Tuple. Piglio tutti i messaggi. di una room.
     #print('zget from redis:')
     #print(messages)
@@ -71,7 +71,7 @@ selection = st.selectbox(label='Select who you wanna chat with.', options=friend
 if not selection:
     'Seleziona un amico per iniziare a chattare.'
 if selection:
-    pushMessagesInSession(friendList[selection])
+    pushMessagesInSession(friendList[selection])    
     # Nel momento in cui seleziono un amico con cui chattare vengono recuperati tutti i messaggi. 
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
@@ -85,7 +85,7 @@ if prompt := st.chat_input("What is up my man?"):
         st.error(f"{selection} non vuole essere disturbato.")
         # Se l'utente al quale stiamo scrivendo è su Do not disturb non riusciremo ad inserire un messaggio nella chat.
     else:
-        st.session_state.r.zadd(f'st:room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
+        st.session_state.r.zadd(f'room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
         # Questa parte appende il messaggio nello z set della chatroom quando l'utente scrive qualcosa.
         pushMessagesInSession(friendList[selection])
         # Refresho la lista dei messaggi

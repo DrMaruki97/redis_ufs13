@@ -1,5 +1,6 @@
 import streamlit as st
 import redis
+from functions import hash_pwd
 
 st.set_page_config(
     page_title="Login",
@@ -13,7 +14,7 @@ def streamlit_login(user, password, r):
         print('It exists!')
         actualPass = r.get("user:"+ user)
         # se l'utente esiste piglia la password e la confronta con quella inserita dall'utente
-        if actualPass==password:
+        if actualPass==str(hash_pwd(password)):
             print('Password Match')
             st.session_state['user'] = user
             st.session_state['status'] = r.get('dnd:user:'+user)
