@@ -89,19 +89,14 @@ def rm_friends(user, friend):
 restituisce una lista che è il risultato della ricerca basata sull'username in input"""
 
 
-def select_user(username_da_cercare):
-    lista_utenti = []
-    i = 0
-    cursor, utenti = r.scan(100, match=f"user:*")
-    for utente in utenti:
-        if username_da_cercare.lower() in utente[5:]:
-            lista_utenti.append(f"{i + 1}: {utente[5:]}")
-            i = i + 1
-    return lista_utenti
-    # viene restituita una lista che è il risultato della ricerca, l'utente deve poter selezionare quello giusto
-
-
-current_user = "reactor"
+def find_user(username_da_cercare):
+    lista = r.smembers("sys:user_list")
+    risultato = []
+    for utente in lista:
+        if username_da_cercare in utente:
+            risultato.append(utente)
+    return print(risultato)
+    
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
 
