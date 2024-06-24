@@ -56,7 +56,7 @@ if 'user' not in st.session_state:
     #viene tentato un login
     if login:
         st.session_state['user'] = username
-        st.success("Login successful")
+        st.toast("Login successful")
         st.switch_page('pages/Friends.py')
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
     else:
