@@ -29,28 +29,28 @@ if 'user' in st.session_state:
         # Quando viene schiacciato il pulsante di update verifico cosa è selezionato e in base a quello piglia l'if giusto. Bruttissimo, ma funziona.
         if new_password and DnD:
             st.session_state.r.set('user:'+st.session_state.user, new_password)
-            st.success('Changed password!')
-            st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
+            st.toast('Changed password!')
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "1")
             st.error('Activated do not disturb.', icon='⛔')
             st.session_state['status'] = '1'
             time.sleep(1)
             st.rerun()
         elif new_password:
             st.session_state.r.set('user:'+st.session_state.user, new_password)
-            st.success('Changed password!')
+            st.toast('Changed password!')
             time.sleep(1)
             st.rerun()
 
         elif DnD: 
-            st.session_state.r.set('dnd:user:'+st.session_state.user, "1")
-            st.error('Activated do not disturb.', icon='⛔')
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "1")
+            st.toast('Activated do not disturb.', icon='⛔')
             st.session_state['status'] = '1'
             time.sleep(1)
             st.rerun()
 
         else:
-            st.session_state.r.set('dnd:user:'+st.session_state.user, "0")
-            st.success('Set status as available', icon='✔️')
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "0")
+            st.toast('Set status as available', icon='✔️')
             st.session_state['status'] = '0'
             time.sleep(1)
             st.rerun()
