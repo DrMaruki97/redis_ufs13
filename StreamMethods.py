@@ -8,14 +8,14 @@ import ui_functions as ui
 altrimenti crea una voce nelle hash dei due utenti che ha come chiave il nome dell'altro utente (rispetto al proprietario dell'hash)
 e come valore la stringa <nome stream>::<id dell'ultimo messaggio letto> (nel caso del ricevente questo primo messaggio l'ultimo 
 messaggio letto non esiste e quindi è 0)'''
-def send_message(user,o_user,message:dict,room=False):
+def send_message(user,o_user,r,message:dict,room=False):
 
     if not room:
 
         room = f'Room:{user}:{o_user}'
         msg_id = r.xadd(f'{room}',message)
-        r.hset(f'Rooms:{user}',f'{o_user}',f'{room}::{msg_id}')
-        r.hset(f'Rooms:{o_user}',f'{user}',f'{room}::0')
+        r.hset(f'User:{user}',f'{o_user}',f'{room}::{msg_id}')
+        r.hset(f'User:{o_user}',f'{user}',f'{room}::0')
         return room
 
     else:
@@ -27,7 +27,7 @@ def send_message(user,o_user,message:dict,room=False):
 '''Metodo da far girare in un thread separato, continua a fare polling allo stream per nuovi messaggi e se li trova li printa e 
 modifica l'hash dell'ascoltatore segnando l'id di quel messaggio come ultimo letto di quella chat'''
 
-def eavesdropping(room,user,o_user,event):
+def eavesdropping(room,user,o_user,event,r):
     r_msgs = []
     while event:
 
@@ -49,12 +49,12 @@ def eavesdropping(room,user,o_user,event):
 '''Metodi da lanciare durante l'inizializzazione della chat per ottenere tutti i messaggi già visti (get_chat) e tutti i messagi
 inviati dall'altro utente mentre noi non eravamo connessi (get_new_msgs). la parte di "printing" della chat è gestita da altre funzioni'''
 
-def get_chat(room,last_id):
+def get_chat(room,last_id,r):
     chat = r.xrange(f'{room}','-',f'{last_id}')
     return chat
     
 
-def get_new_msgs(room,last_id,user,o_user):
+def get_new_msgs(room,last_id,user,o_user,r):
     chat = r.xrange(f'{room}',f'({last_id}','+')
     if chat:
         last_id = chat[-1][0]
@@ -63,11 +63,11 @@ def get_new_msgs(room,last_id,user,o_user):
 
 '''Funzione che fissa un expiration per una room'''
 
-def set_timer(room):
+def set_timer(room,r):
     r.expire(room,60)
 
 
-def send_timed_message(user,o_user,message:dict,room=False):
+def send_timed_message(user,o_user,r,message:dict,room=False):
 
     if not room:
 
