@@ -61,11 +61,13 @@ else:
 
 st.title('Chat')
 
+
 # Recupero la lista di amici in modo da poter recuperare gli idroom. 
 friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
 # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}
 
 selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
+
 if not selection:
     'Seleziona un amico per iniziare a chattare.'
 if selection:
@@ -74,8 +76,7 @@ if selection:
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
             #sto IF serve a far cambiare l'icona del mittente. L'user loggato avrà un'icona personalizzata, così da renderlo distinguibile.
-            mess = st.markdown(f"*{message['timestamp']}*: "+message['text'])
-
+            mess = st.markdown(f"*:gray[{message['timestamp']}:]* "+message['text'])
 
 
 # Accept user input
