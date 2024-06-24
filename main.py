@@ -1,5 +1,5 @@
 from chat import chat_interface, history_chat, dnd_on
-from functions import login, start_form, select_user, hash_pwd2, connect, sign_up, add_friends, set_dnd_on, set_dnd_off
+from functions import login, start_form, hash_pwd2, connect, sign_up, add_friends, set_dnd_on, set_dnd_off
 from functions import change_psw
 
 
@@ -35,8 +35,7 @@ if __name__ == "__main__":
                 chat_interface(user, channel)
 
         elif choice == 2:
-            new_friend = select_user() #Funzione da finire "placeholder"
-            add_friends(user, new_friend)
+            print("not now")
 
         elif choice == 3:
             if not dnd_on(user):
@@ -68,12 +67,3 @@ if __name__ == "__main__":
 
         else:
             pass
-
-
-
-
-
-
-
-
-
