@@ -32,6 +32,7 @@ def id_maker(id_user, friend):
         return f"{id_user}{id}"
 
 
+
 """LOGIN e REGISTRAZIONE"""
 
 
@@ -55,7 +56,7 @@ def sign_up(username, pwd):
             r.setbit('sys:dndmap', int(offset), 0)
     else:
         return False  # utente già esistente
-    return True, r.get(f"id_usr:{username}"), username
+    return True, r.get(f"id_user:{username}"), username
 
 
 def login(username, pwd):
@@ -72,7 +73,6 @@ def login(username, pwd):
 
 
 def add_friends(user, friend):
-
     if r.exists("user:" + friend.lower()):
         r.sadd(f"contacts:{user}", friend)
         return True
@@ -80,7 +80,6 @@ def add_friends(user, friend):
 
 
 def rm_friends(user, friend):
-
     if r.exists("user:" + friend.lower()):
         r.srem(f"contacts:{user}", friend)
         return True
@@ -98,7 +97,7 @@ def find_user(username_da_cercare):
         if username_da_cercare in utente:
             risultato.append(utente)
     return risultato
-    
+
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
 
@@ -120,7 +119,6 @@ def set_dnd_on(user_id):
 
 def set_dnd_off(user_id):
     return r.setbit("sys:dndmap", int(user_id), 0)
-        
+
 
 r = connect()
-

@@ -1,5 +1,6 @@
 import streamlit as st
 import redis
+from functions import hash_pwd
 
 st.set_page_config(
     page_title="Login",
@@ -13,7 +14,7 @@ def streamlit_login(user, password, r):
         print('It exists!')
         actualPass = r.get("user:"+ user)
         # se l'utente esiste piglia la password e la confronta con quella inserita dall'utente
-        if actualPass==password:
+        if actualPass==str(hash_pwd(password)):
             print('Password Match')
             st.session_state['user'] = user
             st.session_state['status'] = r.get('dnd:user:'+user)
@@ -56,7 +57,7 @@ if 'user' not in st.session_state:
     #viene tentato un login
     if login:
         st.session_state['user'] = username
-        st.success("Login successful")
+        st.toast("Login successful")
         st.switch_page('pages/Friends.py')
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
     else:
