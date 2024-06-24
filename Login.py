@@ -1,5 +1,6 @@
 import streamlit as st
-import redis 
+import redis
+from functions import hash_pwd
 
 st.set_page_config(
     page_title="Login",
@@ -13,7 +14,7 @@ def streamlit_login(user, password, r):
         print('It exists!')
         actualPass = r.get("user:"+ user)
         # se l'utente esiste piglia la password e la confronta con quella inserita dall'utente
-        if actualPass==password:
+        if actualPass==str(hash_pwd(password)):
             print('Password Match')
             st.session_state['user'] = user
             st.session_state['status'] = r.get('dnd:user:'+user)
@@ -56,7 +57,7 @@ if 'user' not in st.session_state:
     #viene tentato un login
     if login:
         st.session_state['user'] = username
-        st.success("Login successful")
+        st.toast("Login successful")
         st.switch_page('pages/Friends.py')
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
     else:
@@ -65,6 +66,8 @@ if 'user' not in st.session_state:
     #Se invece l'utente preferisce registrarsi...
     if not r.exists('user:'+username):
         r.set("user:"+ username, password)
+        r.incrby("sys:id_user", 1)
+        r.set(f"id_usr:{username}", r.get("sys:id_user"))
         f"Congratulations, {username}. You're in."
         st.session_state['user'] = username
         st.switch_page('pages/Friends.py')
@@ -77,3 +80,4 @@ if 'user' in st.session_state:
     st.empty()
     st.switch_page('pages/Friends.py')
 # Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
+
