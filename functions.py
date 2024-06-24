@@ -54,7 +54,7 @@ def sign_up(username, pwd):
             r.setbit('sys:dndmap', int(offset), 0)
     else:
         return False  # utente già esistente
-    return True, r.get(f"id_usr:{username}"), username
+    return True, r.get(f"id_user:{username}"), username
 
 
 def login(username, pwd):
