@@ -60,7 +60,7 @@ def dnd_on(user):
     if bit == 1:
         try:
             while True:
-                fake_message = int()
+                input()
                 print(f"L'utente selezionato ha la modalità Do Not Disturb attiva, non può ricevere messaggi")
                 if bit == 0:
                     break

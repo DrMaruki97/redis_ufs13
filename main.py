@@ -1,5 +1,5 @@
 from chat import chat_interface, history_chat, dnd_on
-from functions import login, start_form, select_user, hash_pwd2, connect, sign_up, add_friends, set_dnd_on, set_dnd_off
+from functions import login, start_form, find_user, id_maker, connect, sign_up, add_friends, set_dnd_on, set_dnd_off
 from functions import change_psw
 
 
@@ -12,10 +12,14 @@ if __name__ == "__main__":
     else:
         usr, pwd = start_form()
         lista = sign_up(usr, pwd)
-    user = lista[2]
-    id_user = lista[1]
+    try:
+        user = lista[2]
+        id_user = lista[1]
+    except:
+        print("Something went wrong, try again!")
+        exit()
     print()
-    print(f"Welcome back, {user}!")
+    print(f"Welcome, {user}!")
 
     while True:
         print()
@@ -25,32 +29,48 @@ if __name__ == "__main__":
         choice = int(input("Enter your choice: "))
 
         if choice == 1:
-            friend = "alexa" #FUNZIONE DA FINIRE "placeholder name"
-            print(f"You opened the chat with {friend}!")
-            if not dnd_on(friend):
-                id_chat = hash_pwd2(f"{user}:{friend}")
-                print(id_chat) #serve a noi, poi lo eliminiamo
-                channel = f"channel:{id_chat}"
-                history_chat(id_chat)
-                chat_interface(user, channel)
+            contatti = r.smembers(f"contacts:{user}")
+            contatti = list(contatti)
+            if contatti:
+                for a, b in enumerate(contatti):
+                    print(f"{a}: {b}")
+                choice = int(input("Choose the user: "))
+                friend = contatti[choice]
+                if not dnd_on(friend):
+                    id_chat = id_maker(id_user, friend)
+                    print(id_chat)  # serve a noi, poi lo eliminiamo
+                    channel = f"channel:{id_chat}"
+                    history_chat(id_chat)
+                    chat_interface(user, channel)
+                    print(f"You opened the chat with {friend}!")
+            else:
+                print("You do not have any friends, add one first!")
 
         elif choice == 2:
-            new_friend = select_user() #Funzione da finire "placeholder"
-            add_friends(user, new_friend)
+            key = input("Enter the username of the user: ")
+            risultati = find_user(key)
+            if risultati:
+                for a, b in enumerate(risultati):
+                    print(f"{a}: {b}")
+                choice = int(input("Choose the user: "))
+                if add_friends(user, risultati[choice]):
+                    print(f"You and {risultati[choice]} are now friends!")
+            else:
+                print("Sorry, no friend found with this username!")
 
         elif choice == 3:
-            if not dnd_on(user):
+            if r.getbit(f"dndmap", int(id_user)) == "0":
                 answer = input("Do you wanna activate Do-Not-Disturb mode? (Y/n) ")
-                if answer == "Y" or "y":
-                    c = set_dnd_on(user, id_user)
+                if answer == "Y" or answer == "y":
+                    c = set_dnd_on(id_user)
                     if c:
                         print("Do-Not-Disturb mode activated")
                 else:
                     pass
             else:
-                answer = input("Do you wanna deactivate Do-Not-Disturb mode? (Y/n) ")
-                if answer == "Y" or "y":
-                    c = set_dnd_off(user, id_user)
+                answer = input("Do you wanna Deactivate Do-Not-Disturb mode? (Y/n) ")
+                if answer == "Y" or answer == "y":
+                    c = set_dnd_off(id_user)
                     if c:
                         print("Do-Not-Disturb mode deactivated")
                 else:

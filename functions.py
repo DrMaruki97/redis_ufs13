@@ -24,11 +24,13 @@ def hash_pwd(pwd):
     return hash_value
 
 
-def hash_pwd2(pwd):
-    hash_value = 89
-    for char in pwd:
-        hash_value = hash_value + ord(char)
-    return hash_value
+def id_maker(id_user, friend):
+    id = r.get(f"id_user:{friend}")
+    if id < id_user:
+        return f"{id}{id_user}"
+    else:
+        return f"{id_user}{id}"
+
 
 """LOGIN e REGISTRAZIONE"""
 
@@ -59,7 +61,7 @@ def sign_up(username, pwd):
 def login(username, pwd):
     if r.exists(f"user:{username.lower()}"):
         if str(hash_pwd(pwd)) == r.get(f"user:{username.lower()}"):
-            return True, r.get(f"id_usr:{username}"), username  # se login ha successo, restituisce true e id e usrname
+            return True, r.get(f"id_user:{username}"), username  # se login ha successo, restituisce true e id e usrname
         else:
             return False  # pwd sbagliata
     else:
@@ -95,7 +97,7 @@ def find_user(username_da_cercare):
     for utente in lista:
         if username_da_cercare in utente:
             risultato.append(utente)
-    return print(risultato)
+    return risultato
     
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
@@ -109,17 +111,16 @@ def timed_chat(user, friend, duration_chat):
 
 
 def change_psw(user, psw):
-    return r.set(user.lower(), hash_pwd(psw))
+    return r.set(f"user:{user.lower()}", hash_pwd(psw))
 
 
-def set_dnd_on(user, user_id):
+def set_dnd_on(user_id):
     return r.setbit("sys:dndmap", int(user_id), 1)
 
 
-def set_dnd_off(user, user_id):
+def set_dnd_off(user_id):
     return r.setbit("sys:dndmap", int(user_id), 0)
         
 
 r = connect()
-
 
