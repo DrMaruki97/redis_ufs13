@@ -46,7 +46,7 @@ def add_friend(user,friend,r):
 
 
 def get_friends(user,r):
-    friends = r.get(f'User:{user}')
+    friends = r.hgetall(f'User:{user}')
     lista = list(friends.keys())
     return lista
 
