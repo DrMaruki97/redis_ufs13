@@ -4,13 +4,15 @@ import streamlit as st
 from Login import streamlit_logout
 import time
 
+st.title('Settings')
+
 if 'user' in st.session_state:
-    st.title('Settings')
-    st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
-    if st.session_state['status'] == '1':
-        st.sidebar.text(f"Do not disturb ⛔")
-    else:
-        st.sidebar.text(f"Available for chat ✔️ ")
+    with st.sidebar:
+        f"Currently logged in as **{st.session_state['user']}**"
+        if st.session_state['status'] == '1':
+            f":red[Do not disturb ⛔]"
+        else:
+            f":green[Available for chat ✅] "
 
     logout_button = st.sidebar.button(label='Logout')
     if logout_button:

@@ -28,17 +28,15 @@ def thread_function_test():
     #for message in pubsub.listen():
         #print('new message!')
 
-def pushMessagesInSession(idroom:str):
+def pushMessagesInSession(idroom:str, timed=False):
     #Questo metodo, data un room ID, ottiene i messaggi di quella room, li formatta e li inserisce nella sessione.
 
     #Non potendo utilizzare i JSON su redis devo ricreare qualcosa di simile con Python
     # Ogni messaggio deve essere messages = [{timestamp:43499490, mittente:'pippo',messaggio:'ciao'},...]
-
-    messages = st.session_state.r.zrange(f"st:room:{idroom}", 0, -1, withscores=True)
-    #hgetall è MOLTO strano. Restituisce una lista di Tuple. Piglio tutti i messaggi. di una room.
-    #print('zget from redis:')
-    #print(messages)
-    # Qualche print il quale fine è solo quello di visualizzare cosa sto facendo
+    if timed:
+        messages = st.session_state.r.zrange(f"st:timed_room:{idroom}", 0, -1, withscores=True)
+    else:
+        messages = st.session_state.r.zrange(f"st:room:{idroom}", 0, -1, withscores=True)
 
     messages = list(messages)
     messages = [list(message) for message in messages]
@@ -49,22 +47,6 @@ def pushMessagesInSession(idroom:str):
 
     st.session_state['chat'] = formatted_messages 
     # Infine pusho i messaggi nella sessione.
-
-
-# Streamed response emulator
-def response_generator():
-    # Metodo per "animare" il messaggio in arrivo. Non sono sicuro che mi servirà.
-    response = random.choice(
-        [
-            f"***{selection}:*** Hello there! How can I assist you today?",
-            f"***{selection}:*** Hi, human! Is there anything I can help you with?",
-            f"***{selection}:*** Do you need help?",
-        ]
-    )
-    for word in response.split():
-        yield word + " "
-        time.sleep(0.05)
-
 
 if 'user' in st.session_state:
     with st.sidebar:
@@ -79,8 +61,13 @@ if 'user' in st.session_state:
             #
         # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
         selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
-        st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
+        if selection:
+            timedChat = st.button(label=f'Create timed chat with {selection}')
+            if timedChat:
+                pass
+                
         st.sidebar.divider()
+        st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
         logout_button = st.sidebar.button(label='Logout')
 
 
@@ -96,7 +83,10 @@ else:
     # Solito redirect se non sei loggato.
 
 st.markdown('<div class="floating"></div>', unsafe_allow_html=True)
-st.title('Chat')
+if selection:
+    st.title(f'Chat with {selection}')
+else:
+    st.title('Chat')
 
 
 if not selection:
