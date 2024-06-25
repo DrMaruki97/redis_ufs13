@@ -40,7 +40,7 @@ def start_form():
     while True:
         username = input("Inserisci il tuo username: ")
         pwd = input("Inserisci la password: ")
-        if 3 < len(pwd) < 17 and len(username) < 20:
+        if 3 < len(pwd) < 17 and len(username) <= 20:
             break
     return username, pwd
 
@@ -49,8 +49,8 @@ def sign_up(username, pwd):
     if not r.exists(f"user:{username.lower()}"):
         c = r.set(f"user:{username.lower()}", hash_pwd(pwd))
         if c:
-            r.incrby("sys:id_user", 1)
-            r.set(f"id_user:{username}", r.get("sys:id_user"))
+            id = r.incrby("sys:id_user", 1)
+            r.set(f"id_user:{username}",id)
             r.sadd(f"sys:user_list", username)
             offset = r.get(f"id_user:{username}")
             r.setbit('sys:dndmap', int(offset), 0)
@@ -62,12 +62,17 @@ def sign_up(username, pwd):
 def login(username, pwd):
     if r.exists(f"user:{username.lower()}"):
         if str(hash_pwd(pwd)) == r.get(f"user:{username.lower()}"):
-            return True, r.get(f"id_user:{username}"), username  # se login ha successo, restituisce true e id e usrname
+            return True  # se login ha successo, restituisce true e id e usrname
         else:
             return False  # pwd sbagliata
     else:
         return False  # utente non esiste
 
+def check_disp(user):
+    return r.exists(f"user:{user.lower()}")
+
+def check_psw(psw):
+    return 3 < len(psw) < 17
 
 """GESTIONE AMICI"""
 
@@ -100,17 +105,23 @@ def find_user(username_da_cercare):
 
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
-
-
-def timed_chat(user, friend, duration_chat):
-    if r.exists(f"room:{user}:{friend}"):
-        r.zadd(f"t_room:{user}:{friend}")
-        r.expire(f"t_room:{user}:{friend}", time=duration_chat)
-        print(f"La chat è iniziata e sarà disponibile per {duration_chat} secondi")
+def timed_chat(room):
+    return '*'+ room
 
 
 def change_psw(user, psw):
     return r.set(f"user:{user.lower()}", hash_pwd(psw))
+
+
+def check_dnd(user_id):
+    dnd = r.getbit(f"dndmap", int(user_id))
+    return int(dnd)
+
+def change_dnd(user_id,dnd):
+    if dnd:
+        r.setbit("sys:dndmap", int(user_id), 0)
+    else:
+        r.setbit("sys:dndmap", int(user_id), 1)
 
 
 def set_dnd_on(user_id):
