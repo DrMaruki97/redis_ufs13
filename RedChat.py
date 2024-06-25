@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     while True:
                         
                         user = input('Scegli uno Username >> ')
-                        if f.check_disp(user):
+                        if not f.check_disp(user):
                             break
                         print('Username non disponibile')
 
@@ -85,10 +85,11 @@ if __name__ == '__main__':
         if page == 'UserPage':
 
             user_id = r.get(f'id_user:{user}')
+            
 
             while True:
                 
-                print(f'Benvenuto, {user}\n\n')
+                print(f'\nBenvenuto, {user}\n')
                 ui.page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
                                                             # entriamo in un altro ciclo che rappresenta la pagina utente
                 action = ui.action()
@@ -113,8 +114,12 @@ if __name__ == '__main__':
                         choice = input('Modificare il proprio stato? [Y/N] ').lower()
 
                         if choice == 'y':
-                            f.change_dnd(user,dnd)
-                            break
+                            try:
+                                f.change_dnd(user_id,dnd)
+                                print('Do not Disturb modificato!')
+                                break
+                            except:
+                                print('ERRORE: Non è stato possibile modificare il DnD')
 
                         elif choice == 'n':
                             break
@@ -159,37 +164,27 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Con chi vuoi chattare? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Con chi vuoi chattare? >> ')
+                            
 
                             if not action:
                                 break
                             
-                            if action.isnumeric():
-                                if int(action) <= len(contatti):
-                                    o_user = contatti[int(action)-1]
-                                    break
-                                else:
-                                    ui.wrg_cmd()
-                                
-                            else:
-                                try:
-                                    contatti.index(action)
-                                    o_user = action
-                                    break
-                                except:
-                                    ui.wrg_cmd()
+                            o_user = f.resp_eval(action,contatti)
+                            if o_user:
+                                break
                         
                         if action:
 
                                 o_user_id = r.get(f'id_user:{o_user}')                          
 
                                 print(f'CHAT CON {o_user}')
-                                print('premi <enter> per uscire')
+                                print('Scrivi <esc> per uscire')
 
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
-                                ch.history_chat(id_chat)
+                                ch.history_chat(user,id_chat)
                                 ch.chat_interface(user,channel,o_user_id)
                                               
                     else:
@@ -204,35 +199,28 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Con chi vuoi chattare? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Con chi vuoi chattare? >> ')
+                            
 
                             if not action:
+                                break                            
+
+                            o_user = f.resp_eval(action,contatti)
+                            if o_user:
                                 break
-                            
-                            if action.isnumeric():
-                                if int(action) <= len(contatti):
-                                    o_user = contatti[int(action)-1]
-                                    break
-                                else:
-                                    ui.wrg_cmd()
-                                
-                            else:
-                                try:
-                                    contatti.index(action)
-                                    o_user = action
-                                    break
-                                except:
-                                    ui.wrg_cmd()
                         
                         if action:
+
+                            o_user_id = r.get(f'id_user:{o_user}')
                     
-                            print(f'CHAT CON {o_user}')
-                            print('premi <enter> per uscire')
+                            print(f'CHAT A TEMPO CON {o_user}')
+                            print('La chat scomparirà dopo un minuto dall\'ultimo messaggio')
+                            print('Scrivi <esc> per uscire')
 
                             id_chat = f.timed_chat(f.id_maker(user_id, o_user))
                             channel = f'channel:{id_chat}'
-                            ch.history_chat(id_chat)
+                            ch.history_chat(user,id_chat)
                             ch.chat_interface(user,channel,o_user_id)
                     
                     else:
@@ -261,28 +249,18 @@ if __name__ == '__main__':
                     risultati = f.find_user(ricerca)
                     if risultati:
                         while True:
+                            print('premi <enter> per uscire')
                             ui.view_list(risultati)
 
                             selezione = ui.action()
-                            print('premi <enter> per uscire')
+                            
 
                             if not action:
                                 break
-                                
-                            if action.isnumeric():
-                                if int(action) <= len(risultati):
-                                    friend = risultati[int(action)-1]
-                                    break
-                                else:
-                                    ui.wrg_cmd()
-                                    
-                            else:
-                                try:
-                                    risultati.index(action)
-                                    friend = action
-                                    break
-                                except:
-                                    ui.wrg_cmd()
+                            
+                            friend = f.resp_eval(action,risultati)
+                            if friend:
+                                break
                         
                         if action:
                             if f.add_friends(user, friend):
@@ -303,26 +281,17 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
+                            
 
                             if not action:
                                 break
+
+                            un_friend = f.resp_eval(action,contatti)
+                            if un_friend:
+                                break
                             
-                            if action.isnumeric():
-                                if int(action) <= len(contatti):
-                                    un_friend = contatti[int(action)-1]
-                                    break
-                                else:
-                                    ui.wrg_cmd()
-                                
-                            else:
-                                try:
-                                    contatti.index(action)
-                                    un_friend = action
-                                    break
-                                except:
-                                    ui.wrg_cmd()
                         
                         if action:
 
