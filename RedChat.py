@@ -85,11 +85,11 @@ if __name__ == '__main__':
         if page == 'UserPage':
 
             user_id = r.get(f'id_user:{user}')
-            print(user_id)
+            
 
             while True:
                 
-                print(f'Benvenuto, {user}\n')
+                print(f'\nBenvenuto, {user}\n')
                 ui.page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
                                                             # entriamo in un altro ciclo che rappresenta la pagina utente
                 action = ui.action()
@@ -191,7 +191,7 @@ if __name__ == '__main__':
 
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
-                                ch.history_chat(id_chat)
+                                ch.history_chat(user,id_chat)
                                 ch.chat_interface(user,channel,o_user_id)
                                               
                     else:
@@ -213,22 +213,10 @@ if __name__ == '__main__':
                             if not action:
                                 break
                             
-                            if action.isnumeric():
-                                if int(action) <= len(contatti):
-                                    o_user = contatti[int(action)-1]
-                                    break
-                                else:
-                                    ui.wrg_cmd()
-                                
-                            else:
-                                try:
-                                    contatti.index(action)
-                                    o_user = action
-                                    break
-                                except:
-                                    ui.wrg_cmd()
+
+                            o_user = f.resp_eval(action,contatti)
                         
-                        if action:
+                        if action and o_user:
 
                             o_user_id = r.get(f'id_user:{o_user}')
                     
@@ -238,7 +226,7 @@ if __name__ == '__main__':
 
                             id_chat = f.timed_chat(f.id_maker(user_id, o_user))
                             channel = f'channel:{id_chat}'
-                            ch.history_chat(id_chat)
+                            ch.history_chat(user,id_chat)
                             ch.chat_interface(user,channel,o_user_id)
                     
                     else:
