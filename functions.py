@@ -105,7 +105,8 @@ def find_user(username_da_cercare):
     risultato = []
     for utente in lista:
         if username_da_cercare in utente:
-            risultato.append(utente)
+            if utente.startswith(username_da_cercare):
+                risultato.append(utente)
     return risultato
 
 
