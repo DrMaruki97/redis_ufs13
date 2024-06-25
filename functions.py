@@ -91,6 +91,11 @@ def rm_friends(user, friend):
     return False
 
 
+def get_friends(user):
+    contatti = r.smembers(f"contacts:{user}")
+    return list(contatti)
+
+
 """RICERCA PARZIALE UTENTE: f. che permette la ricerca di un username anche parzialmente ("davi" invece che davidino),
 restituisce una lista che è il risultato della ricerca basata sull'username in input"""
 
