@@ -4,12 +4,27 @@ import time
 from datetime import datetime
 from Login import streamlit_logout
 import threading
+import redis
 
-def thread_function_test(p):
-    #print('testing threading')
+CIAO = 'a'
+
+def connect():
+    r = redis.Redis(
+        host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
+        port=16230,
+        password='y6ORUWqEjBvQZU3ICfuV8dgU8glOYFwL',
+        decode_responses=True
+    )
+    return r
+
+def thread_function_test():
+    r = connect()
+    pubsub = r.pubsub()
+    pubsub.subscribe('test')
     threading.Timer(5.0, thread_function_test).start()
-    new_mess = p.get_message()
-    print(new_mess)
+    st.session_state.p = pubsub
+    new_mess = st.session_state.p.get_message()
+    if new_mess: print(new_mess)
     #for message in pubsub.listen():
         #print('new message!')
 
@@ -79,11 +94,11 @@ selection = st.selectbox(label='Select who you wanna chat with.', options=friend
 if not selection:
     'Seleziona un amico per iniziare a chattare.'
 if selection:
-    st.session_state['p'] = st.session_state.r.pubsub()
+    #st.session_state['p'] = st.session_state.r.pubsub()
     #Inizializzo il pubsub. Non so manco io che sto facendo. 
-    st.session_state['p'].subscribe('test')
+    #st.session_state['p'].subscribe('test')
 
-    y = threading.Thread(target=thread_function_test, args=(st.session_state['p'],))
+    y = threading.Thread(target=thread_function_test)
     y.start()
 
     pushMessagesInSession(friendList[selection])
