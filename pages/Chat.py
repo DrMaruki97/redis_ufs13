@@ -3,7 +3,15 @@ import random
 import time
 from datetime import datetime
 from Login import streamlit_logout
+import threading
 
+def thread_function_test(p):
+    #print('testing threading')
+    threading.Timer(5.0, thread_function_test).start()
+    new_mess = p.get_message()
+    print(new_mess)
+    #for message in pubsub.listen():
+        #print('new message!')
 
 def pushMessagesInSession(idroom:str):
     #Questo metodo, data un room ID, ottiene i messaggi di quella room, li formatta e li inserisce nella sessione.
@@ -11,7 +19,7 @@ def pushMessagesInSession(idroom:str):
     #Non potendo utilizzare i JSON su redis devo ricreare qualcosa di simile con Python
     # Ogni messaggio deve essere messages = [{timestamp:43499490, mittente:'pippo',messaggio:'ciao'},...]
 
-    messages = st.session_state.r.zrange(f"room:{idroom}", 0, -1, withscores=True)
+    messages = st.session_state.r.zrange(f"st:room:{idroom}", 0, -1, withscores=True)
     #hgetall è MOLTO strano. Restituisce una lista di Tuple. Piglio tutti i messaggi. di una room.
     #print('zget from redis:')
     #print(messages)
@@ -71,8 +79,16 @@ selection = st.selectbox(label='Select who you wanna chat with.', options=friend
 if not selection:
     'Seleziona un amico per iniziare a chattare.'
 if selection:
-    pushMessagesInSession(friendList[selection])    
+    st.session_state['p'] = st.session_state.r.pubsub()
+    #Inizializzo il pubsub. Non so manco io che sto facendo. 
+    st.session_state['p'].subscribe('test')
+
+    y = threading.Thread(target=thread_function_test, args=(st.session_state['p'],))
+    y.start()
+
+    pushMessagesInSession(friendList[selection])
     # Nel momento in cui seleziono un amico con cui chattare vengono recuperati tutti i messaggi. 
+
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
             #sto IF serve a far cambiare l'icona del mittente. L'user loggato avrà un'icona personalizzata, così da renderlo distinguibile.
@@ -84,9 +100,16 @@ if prompt := st.chat_input("What is up my man?"):
     if st.session_state.r.get(f"st:dnd:user:{selection}")=='1':
         st.error(f"{selection} non vuole essere disturbato.")
         # Se l'utente al quale stiamo scrivendo è su Do not disturb non riusciremo ad inserire un messaggio nella chat.
+
     else:
-        st.session_state.r.zadd(f'room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
+        st.session_state.r.zadd(f'st:room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
         # Questa parte appende il messaggio nello z set della chatroom quando l'utente scrive qualcosa.
+        #st.session_state.r.publish
+        print(prompt)
+        st.session_state['r'].publish(channel = 'test', message = prompt)
+        print(st.session_state.p.get_message())
+        #Provo a pushare il messaggio in un pubsub channell
+
         pushMessagesInSession(friendList[selection])
         # Refresho la lista dei messaggi
         st.rerun()

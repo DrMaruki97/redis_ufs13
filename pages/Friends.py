@@ -27,6 +27,7 @@ else:
     st.switch_page('Login.py')
     # Questa parte di codice fa switchare la pagina a quella del login se qualcuno prova ad accedere a /friends.py senza essere loggato
 
+print('doing this')
 # Questa parte di codice mi permette di ottenere la lista amici dell'utente loggato.
 friends = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
 # con hgetall creo un dizionario degli amici

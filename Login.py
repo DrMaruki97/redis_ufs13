@@ -1,6 +1,6 @@
 import streamlit as st
 import redis
-from functions import hash_pwd
+from functions import hash_pwd, sign_up
 
 st.set_page_config(
     page_title="Login",
@@ -65,10 +65,13 @@ if 'user' not in st.session_state:
   if register_button:
     #Se invece l'utente preferisce registrarsi...
     if not r.exists('user:'+username):
-        r.set("user:"+ username, password)
-        r.incrby("sys:id_user", 1)
-        r.set(f"id_usr:{username}", r.get("sys:id_user"))
+        sign_up(username, password)
+        #r.set(f"user:{username.lower()}", hash_pwd(pwd))
+        #r.incrby("sys:id_user", 1)
+        #r.set(f"id_user:{username}", r.get("sys:id_user"))
         f"Congratulations, {username}. You're in."
+        #r.sadd(f"sys:user_list", username)
+
         st.session_state['user'] = username
         st.switch_page('pages/Friends.py')
         # Switcho pagina se la registrazione è andata a buon fine. 

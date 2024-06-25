@@ -20,7 +20,7 @@ if 'user' in st.session_state:
     # Solita roba per la sidebar
 
 
-    new_password = st.text_input(label="Choose a new password", placeholder=f'Current password: {st.session_state.r.get("user:"+st.session_state.user)}')
+    new_password = st.text_input(label="Choose a new password", placeholder=f'you better remember it')
     # mostro la password corrente. chiaramente non è una buona practice ma mi è utile
 
     DnD = st.toggle("Do not disturb")
