@@ -1,6 +1,6 @@
 from chat import chat_interface, history_chat, dnd_on
-from functions import change_psw, open_group, create_group
 from functions import login, start_form, find_user, id_maker, connect, sign_up, add_friends, set_dnd_on, set_dnd_off
+from functions import change_psw
 
 
 if __name__ == "__main__":
@@ -29,40 +29,22 @@ if __name__ == "__main__":
         choice = int(input("Enter your choice: "))
 
         if choice == 1:
-            while True:
-                print()
-                print(f" [1]|Personal Chats [2]|Group Chats")
-                choice = int(input("Enter your choice: "))
-                if choice == 1:
-                    contatti = r.smembers(f"contacts:{user}")
-                    contatti = list(contatti)
-                    if contatti:
-                        for a, b in enumerate(contatti):
-                            print(f"{a}: {b}")
-                        choice = int(input("Choose the user: "))
-                        friend = contatti[choice]
-                        if not dnd_on(friend):
-                            id_chat = id_maker(id_user, friend)
-                            print(id_chat)  # serve a noi, poi lo eliminiamo
-                            channel = f"channel:{id_chat}"
-                            history_chat(id_chat)
-                            chat_interface(user, channel, id_user)
-                            print(f"You opened the chat with {friend}!")
-                    else:
-                        print("You do not have any friends, add one first!")
-                elif choice == 2:
-                    print(f" [1]|Apri gruppi [2]|Crea Gruppi")
-                    choice = int(input("Enter your choice: "))
-                    if choice == 1:
-                        id_chat = open_group()
-                    else:
-                        nome_chat = input("Scegli un nome per la chat: ")
-                        id_chat = create_group(nome_chat)
-                    group_chat = f"room:{id_chat}"
-                    print(id_chat)
+            contatti = r.smembers(f"contacts:{user}")
+            contatti = list(contatti)
+            if contatti:
+                for a, b in enumerate(contatti):
+                    print(f"{a}: {b}")
+                choice = int(input("Choose the user: "))
+                friend = contatti[choice]
+                if not dnd_on(friend):
+                    id_chat = id_maker(id_user, friend)
+                    print(id_chat)  # serve a noi, poi lo eliminiamo
+                    channel = f"channel:{id_chat}"
                     history_chat(id_chat)
-                    chat_interface(user, group_chat, id_user)
-
+                    chat_interface(user, channel)
+                    print(f"You opened the chat with {friend}!")
+            else:
+                print("You do not have any friends, add one first!")
 
         elif choice == 2:
             key = input("Enter the username of the user: ")

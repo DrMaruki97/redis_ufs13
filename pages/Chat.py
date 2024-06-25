@@ -67,16 +67,24 @@ def response_generator():
 
 
 if 'user' in st.session_state:
-    st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
     with st.sidebar:
+        f"Logged in as **{st.session_state['user']}**"
+
+# Recupero la lista di amici in modo da poter recuperare gli idroom. 
+        friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
+        if st.session_state['status'] == '1':
+            f":red[Do not disturb ⛔]"
+        else:
+            f":green[Available for chat ✅] "
+            #
+        # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
+        selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
         st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
+        st.sidebar.divider()
+        logout_button = st.sidebar.button(label='Logout')
 
 
-    if st.session_state['status'] == '1':
-        st.sidebar.text(f"Do not disturb ⛔")
-    else:
-        st.sidebar.text(f"Available for chat ✔️ ")
-    logout_button = st.sidebar.button(label='Logout')
+
     if logout_button:
         streamlit_logout()
         st.switch_page('Login.py')
@@ -87,13 +95,9 @@ else:
     st.switch_page('Login.py')
     # Solito redirect se non sei loggato.
 
-with st.container():
-    st.title('Chat')
+st.markdown('<div class="floating"></div>', unsafe_allow_html=True)
+st.title('Chat')
 
-    # Recupero la lista di amici in modo da poter recuperare gli idroom. 
-    friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
-    # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
-    selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
 
 if not selection:
     'Seleziona un amico per iniziare a chattare.'

@@ -42,7 +42,7 @@ def chat_interface(user, channel,o_user_id):
 
 def save_msg(channel, message):
 
-    name = f"{channel[5:]}"
+    name = f"{channel[8:]}"
 
     instante = time()
     chat_name = r.zadd(f"room:{name}", {f"{message}": int(instante)})

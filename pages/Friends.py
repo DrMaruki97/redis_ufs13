@@ -11,6 +11,7 @@ if 'user' in st.session_state:
 # Se l'utente è loggato:
     st.title('Friends')
     st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
+    st.sidebar.divider()
     if st.session_state['status'] == '1':
         st.sidebar.text(f"Do not disturb ⛔")
     else:
@@ -36,24 +37,29 @@ friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
 friends_df['Remove'] = [False for friend in friends]
 # creo una colonna con valori True o False per ogni amico nella friendlist. Serve per poterli rimuovere. 
 
+col1, col2 = st.columns(2)
 if not friends:
     st.write('***Your current friendlist:***')
     'It seems like you have no friends.'
     st.image(image='pages/pepecry.gif')
     # Se non hai amici faccio visualizzare un pepe che piange
 else:
-    friends_df = st.data_editor(friends_df, hide_index=True)
-    #Trasformo il dataframe in un dataframe editabile. Così posso selezionare quali utenti rimuovere
-
-    conf_remove = st.button(label='Remove from friendlist')
-    # Pulsante per rimuovere
-    friends_to_be_removed = [user for user in friends_df[friends_df['Remove']==True]['User']]
+    with col1:
+        friends_df = st.data_editor(friends_df, hide_index=True)
+        #Trasformo il dataframe in un dataframe editabile. Così posso selezionare quali utenti rimuovere
+    with col2:
+        create_timed_chats = st.button(label='Create timed chats')
+        conf_remove = st.button(label='Remove from friendlist')
+        # Pulsante per rimuovere
+        friends_to_be_removed = [user for user in friends_df[friends_df['Remove']==True]['User']]
     # Che comando! Semplicemente creo una lista degli utenti da rimuovere estrapolando gli utenti sul quale ho selezionato remove nel dataframe editabile
     if conf_remove and friends_to_be_removed:
         st.session_state.r.hdel(f"st:friendList:{st.session_state.user}", *friends_to_be_removed)
         # Se il pulsante di conferma per la rimozione degli amici viene schiacciato E ci sono amici da rimuovere allora manda un hdel
         st.success('Removed your buddies.')
         st.rerun()
+    elif create_timed_chats and friends_to_be_removed:
+        pass
 
 st.divider()
 # una linea ------------
@@ -61,8 +67,11 @@ st.divider()
 st.title('Add a friend')
 default_label = 'Type of your friend username'
 friend = st.text_input(label=default_label)
-add_button = st.button(label='Add a friend')
-search_button = st.button(label='Search')
+col3, col4 = st.columns(2)
+with col3:
+    add_button = st.button(label='Add a friend')
+with col4:
+    search_button = st.button(label='Search')
 # Roba per aggiungere gli amici 
 if search_button and friend:
     st.title('Search results')
@@ -72,7 +81,7 @@ if search_button and friend:
         st.write('There are no users by that name.')
         st.image('pages/pepewhat.png')
 if add_button:
-    if st.session_state.r.exists('user:'+friend):
+    if st.session_state.r.exists('user:'+friend) and friend != st.session_state.user:
         idroom = [int(st.session_state.r.get('id_user:'+friend)), int(st.session_state.r.get('id_user:'+st.session_state.user))]
         idroom.sort()
         idroom = ':'.join([str(id) for id in idroom])

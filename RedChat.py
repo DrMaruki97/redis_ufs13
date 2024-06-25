@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     while True:
                         
                         user = input('Scegli uno Username >> ')
-                        if not f.check_disp(user):
+                        if f.check_disp(user):
                             break
                         print('Username non disponibile')
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                         choice = input('Modificare il proprio stato? [Y/N] ').lower()
 
                         if choice == 'y':
-                            f.change_dnd(user_id,dnd)
+                            f.change_dnd(user,dnd)
                             break
 
                         elif choice == 'n':
@@ -158,11 +158,10 @@ if __name__ == '__main__':
                     if contatti:
                         
                         while True:
-                            print('premi <enter> per uscire')
 
                             ui.view_list(contatti)
-                            
-                            action = input('Con chi vuoi chattare? >> ')                            
+                            action = input('Con chi vuoi chattare? >> ')
+                            print('premi <enter> per uscire')
 
                             if not action:
                                 break
@@ -187,7 +186,7 @@ if __name__ == '__main__':
                                 o_user_id = r.get(f'id_user:{o_user}')                          
 
                                 print(f'CHAT CON {o_user}')
-                                print('scrivi <esc> per uscire')
+                                print('premi <enter> per uscire')
 
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
@@ -205,10 +204,9 @@ if __name__ == '__main__':
                         
                         while True:
 
-                            print('premi <enter> per uscire')
                             ui.view_list(contatti)
                             action = input('Con chi vuoi chattare? >> ')
-                            
+                            print('premi <enter> per uscire')
 
                             if not action:
                                 break
@@ -255,33 +253,30 @@ if __name__ == '__main__':
                     risultati = f.find_user(ricerca)
                     if risultati:
                         while True:
-
-                            print('premi <enter> per uscire, o seleziona un utente')
                             ui.view_list(risultati)
 
-                            
                             selezione = ui.action()
-                            
+                            print('premi <enter> per uscire')
 
-                            if not selezione:
+                            if not action:
                                 break
                                 
-                            if selezione.isnumeric():
+                            if action.isnumeric():
                                 if int(action) <= len(risultati):
-                                    friend = risultati[int(selezione)-1]
+                                    friend = risultati[int(action)-1]
                                     break
                                 else:
                                     ui.wrg_cmd()
                                     
                             else:
                                 try:
-                                    risultati.index(selezione)
-                                    friend = selezione
+                                    risultati.index(action)
+                                    friend = action
                                     break
                                 except:
                                     ui.wrg_cmd()
                         
-                        if selezione:
+                        if action:
                             if f.add_friends(user, friend):
                                 print(f"{friend} è ora tra i tuoi contatti")
                             else:
@@ -300,9 +295,8 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            print('premi <enter> per uscire')
                             action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
-                            
+                            print('premi <enter> per uscire')
 
                             if not action:
                                 break
