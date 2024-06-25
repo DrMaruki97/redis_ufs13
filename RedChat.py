@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
             while True:
                 
-                print(f'Benvenuto, {user}\n\n')
+                print(f'Benvenuto, {user}\n')
                 ui.page(intestazione,comandi,page)            # Se abbiamo completato il login o la registrazione usciamo dal ciclo while ed 
                                                             # entriamo in un altro ciclo che rappresenta la pagina utente
                 action = ui.action()
@@ -159,8 +159,8 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Con chi vuoi chattare? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Con chi vuoi chattare? >> ')                            
 
                             if not action:
                                 break
@@ -185,7 +185,7 @@ if __name__ == '__main__':
                                 o_user_id = r.get(f'id_user:{o_user}')                          
 
                                 print(f'CHAT CON {o_user}')
-                                print('premi <enter> per uscire')
+                                print('scrivi <esc> per uscire')
 
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
@@ -228,7 +228,7 @@ if __name__ == '__main__':
                         if action:
                     
                             print(f'CHAT CON {o_user}')
-                            print('premi <enter> per uscire')
+                            print('Scrivi <esc> per uscire')
 
                             id_chat = f.timed_chat(f.id_maker(user_id, o_user))
                             channel = f'channel:{id_chat}'
@@ -263,28 +263,29 @@ if __name__ == '__main__':
                         while True:
                             ui.view_list(risultati)
 
-                            selezione = ui.action()
                             print('premi <enter> per uscire')
+                            selezione = ui.action()
+                            
 
-                            if not action:
+                            if not selezione:
                                 break
                                 
-                            if action.isnumeric():
+                            if selezione.isnumeric():
                                 if int(action) <= len(risultati):
-                                    friend = risultati[int(action)-1]
+                                    friend = risultati[int(selezione)-1]
                                     break
                                 else:
                                     ui.wrg_cmd()
                                     
                             else:
                                 try:
-                                    risultati.index(action)
-                                    friend = action
+                                    risultati.index(selezione)
+                                    friend = selezione
                                     break
                                 except:
                                     ui.wrg_cmd()
                         
-                        if action:
+                        if selezione:
                             if f.add_friends(user, friend):
                                 print(f"{friend} è ora tra i tuoi contatti")
                             else:
@@ -303,8 +304,9 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
+                            
 
                             if not action:
                                 break
