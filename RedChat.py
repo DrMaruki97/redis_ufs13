@@ -180,7 +180,9 @@ if __name__ == '__main__':
                                 except:
                                     ui.wrg_cmd()
                         
-                        if action:                           
+                        if action:
+
+                                o_user_id = r.get(f'id_user:{o_user}')                          
 
                                 print(f'CHAT CON {o_user}')
                                 print('premi <enter> per uscire')
@@ -188,6 +190,7 @@ if __name__ == '__main__':
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
                                 ch.history_chat(id_chat)
+                                ch.chat_interface(user,channel,o_user_id)
                                               
                     else:
                         print('Non hai ancora alcun contatto, aggiungi i tuoi amici!')
@@ -230,6 +233,7 @@ if __name__ == '__main__':
                             id_chat = f.timed_chat(f.id_maker(user_id, o_user))
                             channel = f'channel:{id_chat}'
                             ch.history_chat(id_chat)
+                            ch.chat_interface(user,channel,o_user_id)
                     
                     else:
                         print('Non hai ancora alcun contatto, aggiungi i tuoi amici!')
