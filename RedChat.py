@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
                         if choice == 'y':
                             try:
-                                f.change_dnd(user,dnd)
+                                f.change_dnd(user_id,dnd)
                                 print('Do not Disturb modificato!')
                                 break
                             except:
@@ -164,8 +164,9 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Con chi vuoi chattare? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Con chi vuoi chattare? >> ')
+                            
 
                             if not action:
                                 break
@@ -179,7 +180,7 @@ if __name__ == '__main__':
                                 o_user_id = r.get(f'id_user:{o_user}')                          
 
                                 print(f'CHAT CON {o_user}')
-                                print('premi <enter> per uscire')
+                                print('Scrivi <esc> per uscire')
 
                                 id_chat = f.id_maker(user_id, o_user)
                                 channel = f'channel:{id_chat}'
@@ -198,8 +199,9 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Con chi vuoi chattare? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Con chi vuoi chattare? >> ')
+                            
 
                             if not action:
                                 break                            
@@ -279,8 +281,9 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
                             print('premi <enter> per uscire')
+                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
+                            
 
                             if not action:
                                 break
