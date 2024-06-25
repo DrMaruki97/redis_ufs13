@@ -11,7 +11,8 @@ def publish_message(channel, message):
 
 
 def message_handler(message):
-    print(f"{message['data']}")
+    message = message['data'].split('::')
+    print(f"{message[0]}  {message[1]}")
 
 
 def subscribe_to_channel(channel):
@@ -32,7 +33,7 @@ def chat_interface(user, channel,o_user_id):
             elif f.check_dnd(o_user_id):
                 print('ERRORE: L\'utente selezionato ha la modalità Do Not Disturb attiva, non può ricevere messaggi')
             else:
-                publish_message(channel, f"{user}: {message}")
+                publish_message(channel, f"{user}::{message}")
     except KeyboardInterrupt:
         pass
     finally:
@@ -45,18 +46,19 @@ def save_msg(channel, message):
 
     instante = time()
     chat_name = r.zadd(f"room:{name}", {f"{message}": int(instante)})
-    if name[0] == '*':
+    if name[0] == '£':
         r.expire(name,60)
     return chat_name
 
 
-def history_chat(id_chat):
+def history_chat(user,id_chat):
     history = r.zrevrange(f"room:{id_chat}", 0, 9, withscores=True)
 
     for message, score in history[::-1]:
+        message = message.split('::')
         dt = datetime.datetime.fromtimestamp(score)
         ora = dt.strftime("%d-%m-%Y %H:%M:%S")
-        print(f"{ora} * {message}")
+        print(f"{freccine(user,message[0])}  {message}  {ora}")
 
 
 def dnd_on(user):
@@ -73,3 +75,10 @@ def dnd_on(user):
             exit()
     else:
         return False
+    
+
+def freccine(user,mittente):
+    if mittente == user:
+        return '>'
+    else:
+        return '<'
