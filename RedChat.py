@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     while True:
                         
                         user = input('Scegli uno Username >> ')
-                        if f.check_disp(user):
+                        if not f.check_disp(user):
                             break
                         print('Username non disponibile')
 
@@ -85,6 +85,7 @@ if __name__ == '__main__':
         if page == 'UserPage':
 
             user_id = r.get(f'id_user:{user}')
+            print(user_id)
 
             while True:
                 
@@ -113,7 +114,7 @@ if __name__ == '__main__':
                         choice = input('Modificare il proprio stato? [Y/N] ').lower()
 
                         if choice == 'y':
-                            f.change_dnd(user,dnd)
+                            f.change_dnd(user_id,dnd)
                             break
 
                         elif choice == 'n':
@@ -157,9 +158,10 @@ if __name__ == '__main__':
                     if contatti:
                         
                         while True:
+                            print('premi <enter> per uscire')
 
                             ui.view_list(contatti)
-                            print('premi <enter> per uscire')
+                            
                             action = input('Con chi vuoi chattare? >> ')                            
 
                             if not action:
@@ -203,9 +205,10 @@ if __name__ == '__main__':
                         
                         while True:
 
+                            print('premi <enter> per uscire')
                             ui.view_list(contatti)
                             action = input('Con chi vuoi chattare? >> ')
-                            print('premi <enter> per uscire')
+                            
 
                             if not action:
                                 break
@@ -226,8 +229,11 @@ if __name__ == '__main__':
                                     ui.wrg_cmd()
                         
                         if action:
+
+                            o_user_id = r.get(f'id_user:{o_user}')
                     
-                            print(f'CHAT CON {o_user}')
+                            print(f'CHAT A TEMPO CON {o_user}')
+                            print('La chat scomparirà dopo un minuto dall\'ultimo messaggio')
                             print('Scrivi <esc> per uscire')
 
                             id_chat = f.timed_chat(f.id_maker(user_id, o_user))
@@ -261,9 +267,11 @@ if __name__ == '__main__':
                     risultati = f.find_user(ricerca)
                     if risultati:
                         while True:
+
+                            print('premi <enter> per uscire, o seleziona un utente')
                             ui.view_list(risultati)
 
-                            print('premi <enter> per uscire')
+                            
                             selezione = ui.action()
                             
 
