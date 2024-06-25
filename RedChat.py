@@ -291,7 +291,44 @@ if __name__ == '__main__':
 
 
                 elif action in ('2','rimuovi contatto'):
-                    print('n\'altra volta')
+
+                    contatti = f.get_friends(user)
+
+                    if contatti:
+                        
+                        while True:
+
+                            ui.view_list(contatti)
+                            action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
+                            print('premi <enter> per uscire')
+
+                            if not action:
+                                break
+                            
+                            if action.isnumeric():
+                                if int(action) <= len(contatti):
+                                    un_friend = contatti[int(action)-1]
+                                    break
+                                else:
+                                    ui.wrg_cmd()
+                                
+                            else:
+                                try:
+                                    contatti.index(action)
+                                    un_friend = action
+                                    break
+                                except:
+                                    ui.wrg_cmd()
+                        
+                        if action:
+
+                            if f.rm_friends(user,un_friend):
+                                print('Contatto rimosso con successo')
+                            else:
+                                print('ERRORE: La rimozione non è andata a buon fine')
+                    
+                    else:
+                        print('Non hai contatti che possano essere eliminati')
 
 
 
