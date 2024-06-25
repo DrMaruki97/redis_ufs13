@@ -76,6 +76,7 @@ if 'user' in st.session_state:
             f":red[Do not disturb ⛔]"
         else:
             f":green[Available for chat ✅] "
+            #
         # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
         selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
         st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
