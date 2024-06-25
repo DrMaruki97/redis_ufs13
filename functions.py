@@ -111,7 +111,7 @@ def find_user(username_da_cercare):
 
 """ CHAT A TEMPO: Viene usata una chiave con scadenza temporale impostata dall'utente"""
 def timed_chat(room):
-    return '*'+ room
+    return '£'+ room
 
 
 def change_psw(user, psw):
@@ -119,7 +119,7 @@ def change_psw(user, psw):
 
 
 def check_dnd(user_id):
-    dnd = r.getbit(f"dndmap", int(user_id))
+    dnd = r.getbit(f"sys:dndmap", int(user_id))
     return int(dnd)
 
 def change_dnd(user_id,dnd):
