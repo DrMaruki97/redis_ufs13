@@ -169,6 +169,7 @@ def resp_eval(azione,lista):
             
         else:
             ui.wrg_cmd()
+            return None
                                 
     else:
         try:
@@ -177,3 +178,4 @@ def resp_eval(azione,lista):
             
         except:
             ui.wrg_cmd()
+            return None
