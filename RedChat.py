@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     while True:
                         
                         user = input('Scegli uno Username >> ')
-                        if f.check_disp(user):
+                        if not f.check_disp(user):
                             break
                         print('Username non disponibile')
 
