@@ -12,7 +12,7 @@ def publish_message(channel, message):
 
 def message_handler(message):
     message = message['data'].split('::')
-    print(f"{message[0]}  {message[1]}")
+    print(f"{message[0]} : {message[1]}")
 
 
 def subscribe_to_channel(channel):
