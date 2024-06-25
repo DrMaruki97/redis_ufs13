@@ -155,49 +155,55 @@ if __name__ == '__main__':
                     contatti = f.get_friends(user)
 
                     if contatti:
-                        ui.view_list(lista)
-
-                        action = input('Con chi vuoi chattare?>> ')
                         
-                        if action.isnumeric():
-                            if int(action) <= len(lista):
-                                o_user = lista[int(action)-1]
-                            else:
-                                ui.wrg_cmd()
-                        
-                        else:
-                            try:
-                                lista.index(action)
-                                o_user = action
-                            except:
-                                ui.wrg_cmd()
-                        
-                        if o_user:
+                        while True:
 
-                            print(f'CHAT CON {o_user}')
-                            print('premi <enter> per uscire dalla chat')
+                            ui.view_list(lista)
+                            action = input('Con chi vuoi chattare? >> ')
+                            print('premi <enter> per uscire')
 
-                            id_chat = f.id_maker(user_id, o_user)
-                            channel = f'channel:{id_chat}'
-                            ch.history_chat(id_chat)
-
-                            event = thr.Event()
-                            event.set()
-
-                            t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event,r))
-                            t1.start()
-
-                            while True:
-
-                                messaggio = ui.speak(user)
-
-                                if messaggio:                            
-                                    sm.send_message(user,o_user,r,messaggio)
+                            if action:
+                            
+                                if action.isnumeric():
+                                    if int(action) <= len(lista):
+                                        o_user = lista[int(action)-1]
+                                        break
+                                    else:
+                                        ui.wrg_cmd()
                                 
                                 else:
-                                    event.clear()
-                                    t1.join()
-                                    break 
+                                    try:
+                                        lista.index(action)
+                                        o_user = action
+                                        break
+                                    except:
+                                        ui.wrg_cmd()                            
+                            
+
+                                print(f'CHAT CON {o_user}')
+                                print('premi <enter> per uscire')
+
+                                id_chat = f.id_maker(user_id, o_user)
+                                channel = f'channel:{id_chat}'
+                                ch.history_chat(id_chat)
+
+                                event = thr.Event()
+                                event.set()
+
+                                t1 = thr.Thread(target=sm.eavesdropping,args=(room,user,o_user,event,r))
+                                t1.start()
+
+                                while True:
+
+                                    messaggio = ui.speak(user)
+
+                                    if messaggio:                            
+                                        sm.send_message(user,o_user,r,messaggio)
+                                    
+                                    else:
+                                        event.clear()
+                                        t1.join()
+                                        break 
                                               
                     else:
                         print('Non hai ancora alcun contatto, aggiungi i tuoi amici!')
