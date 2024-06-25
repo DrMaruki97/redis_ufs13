@@ -1,8 +1,8 @@
-from functions import connect
+import functions as f
 from time import time
 import datetime
 
-r = connect()
+r = f.connect()
 
 
 def publish_message(channel, message):
@@ -21,7 +21,7 @@ def subscribe_to_channel(channel):
     return thread
 
 
-def chat_interface(user, channel):
+def chat_interface(user, channel,o_user_id):
     subscriber_thread = subscribe_to_channel(channel) #quando uno avvia la f. viene sottoscritto al canale
 
     try:
@@ -29,7 +29,10 @@ def chat_interface(user, channel):
             message = input(f"")
             if message.lower() == 'esc':
                 break
-            publish_message(channel, f"{user}: {message}")
+            elif f.check_dnd(o_user_id):
+                print('ERRORE: L\'utente selezionato ha la modalità Do Not Disturb attiva, non può ricevere messaggi')
+            else:
+                publish_message(channel, f"{user}: {message}")
     except KeyboardInterrupt:
         pass
     finally:
