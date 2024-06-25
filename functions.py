@@ -1,4 +1,5 @@
 import redis
+import ui_functions as ui
 
 """CONNESSIONE AL DB: f. decode_responses = le richieste sono decodificate, restituisce r variabile database"""
 
@@ -157,3 +158,22 @@ def open_group():
 def create_group(nome_chat):
     r.sadd(f"sys:chat_gruppo", nome_chat)
     return nome_chat
+
+
+def resp_eval(azione,lista):
+
+    if azione.isnumeric():
+                                
+        if int(azione) <= len(lista):
+            return lista[int(azione)-1]
+            
+        else:
+            ui.wrg_cmd()
+                                
+    else:
+        try:
+            lista.index(azione)
+            return azione
+            
+        except:
+            ui.wrg_cmd()
