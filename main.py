@@ -12,10 +12,10 @@ if __name__ == "__main__":
     else:
         usr, pwd = start_form()
         lista = sign_up(usr, pwd)
-    try:
-        user = lista[2]
-        id_user = lista[1]
-    except:
+    if lista:
+        user = usr
+        id_user = r.get(f"id_user:{user}")
+    else:
         print("Something went wrong, try again!")
         exit()
     print()
