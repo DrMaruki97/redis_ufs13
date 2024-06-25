@@ -5,8 +5,8 @@ from datetime import datetime
 from Login import streamlit_logout
 import threading
 import redis
+from streamlit_autorefresh import st_autorefresh
 
-CIAO = 'a'
 
 def connect():
     r = redis.Redis(
@@ -68,6 +68,10 @@ def response_generator():
 
 if 'user' in st.session_state:
     st.sidebar.text(f"Currently logged in as {st.session_state['user']}")
+    with st.sidebar:
+        st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
+
+
     if st.session_state['status'] == '1':
         st.sidebar.text(f"Do not disturb ⛔")
     else:
@@ -77,19 +81,19 @@ if 'user' in st.session_state:
         streamlit_logout()
         st.switch_page('Login.py')
     # Solita sidebar
+    
 else:
     st.info('Please Login from the Home page and try again.')
     st.switch_page('Login.py')
     # Solito redirect se non sei loggato.
 
-st.title('Chat')
+with st.container():
+    st.title('Chat')
 
-
-# Recupero la lista di amici in modo da poter recuperare gli idroom. 
-friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
-# Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}
-
-selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
+    # Recupero la lista di amici in modo da poter recuperare gli idroom. 
+    friendList = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
+    # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
+    selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
 
 if not selection:
     'Seleziona un amico per iniziare a chattare.'
@@ -98,8 +102,8 @@ if selection:
     #Inizializzo il pubsub. Non so manco io che sto facendo. 
     #st.session_state['p'].subscribe('test')
 
-    y = threading.Thread(target=thread_function_test)
-    y.start()
+    #y = threading.Thread(target=thread_function_test)
+    #y.start()
 
     pushMessagesInSession(friendList[selection])
     # Nel momento in cui seleziono un amico con cui chattare vengono recuperati tutti i messaggi. 
@@ -107,8 +111,7 @@ if selection:
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
             #sto IF serve a far cambiare l'icona del mittente. L'user loggato avrà un'icona personalizzata, così da renderlo distinguibile.
-            mess = st.markdown(f"*:gray[{message['timestamp']}:]* "+message['text'])
-
+            mess = st.markdown(f"*:gray[{message['timestamp']}:]* "+message['text'])    
 
 # Accept user input
 if prompt := st.chat_input("What is up my man?"):
@@ -122,7 +125,6 @@ if prompt := st.chat_input("What is up my man?"):
         #st.session_state.r.publish
         print(prompt)
         st.session_state['r'].publish(channel = 'test', message = prompt)
-        print(st.session_state.p.get_message())
         #Provo a pushare il messaggio in un pubsub channell
 
         pushMessagesInSession(friendList[selection])
@@ -130,10 +132,55 @@ if prompt := st.chat_input("What is up my man?"):
         st.rerun()
         # Faccio un rerun se viene inviato un nuovo messaggio così da aggiornare la chat.
     
+#pubsub = st.session_state.r.pubsub()
+#pubsub.subscribe('test')
+#msg = pubsub.get_message()
+#msg
 
+#for message in pubsub.listen():
+    #print(message)
+    #st.rerun()
 
     # Display assistant response in chat message container
  #   with st.chat_message(selection):
    #     response = st.write_stream(response_generator())
     # Add assistant response to chat history
    # st.session_state.messages.append({"role": selection, "content": response})
+
+# L'autorefresh è viabile, devo solo trovare un modo per pigliare meno roba per renderlo smooth.
+# trova nuovi messaggi con il get message
+
+if st.sidebar.refresh_checkbox:
+    count = st_autorefresh(interval=1500, key="fizzbuzzcounter")
+    hide_streamlit_style = """
+                    <style>
+                    div[data-testid="stToolbar"] {
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
+                    }
+                    div[data-testid="stDecoration"] {
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
+                    }
+                    div[data-testid="stStatusWidget"] {
+                    visibility: hidden;
+                    height: 0%;
+                    position: fixed;
+                    }
+                    #MainMenu {
+                    visibility: hidden;
+                    height: 0%;
+                    }
+                    header {
+                    visibility: hidden;
+                    height: 0%;
+                    }
+                    footer {
+                    visibility: hidden;
+                    height: 0%;
+                    }
+                    </style>
+                    """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
