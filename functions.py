@@ -141,3 +141,19 @@ def set_dnd_off(user_id):
 
 
 r = connect()
+
+
+
+def open_group():
+    risultati = r.smembers(f"sys:chat_gruppo")
+    risultati = list(risultati)
+    if risultati:
+        for a, b in enumerate(risultati):
+            print(f"{a}: {b}")
+        choice = int(input("Choose the user: "))
+        return risultati[choice]
+
+
+def create_group(nome_chat):
+    r.sadd(f"sys:chat_gruppo", nome_chat)
+    return nome_chat
