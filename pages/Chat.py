@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from Login import streamlit_logout
 import redis
-#from streamlit_autorefresh import st_autorefresh
+from streamlit_autorefresh import st_autorefresh
 
 print('Loading chat page')
 
@@ -107,6 +107,5 @@ if prompt := st.chat_input("What is up my man?"):
 
 
 if st.sidebar.refresh_checkbox:
-    pass
-    #count = st_autorefresh(interval=1500, key="fizzbuzzcounter")
+    count = st_autorefresh(interval=1500, key="fizzbuzzcounter")
     
