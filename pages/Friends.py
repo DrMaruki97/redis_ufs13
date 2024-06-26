@@ -3,6 +3,8 @@ from Login import streamlit_logout
 import pandas as pd
 import time
 
+print('Loading friends page')
+
 def userList(pattern):
     # mi serve una lista di username per il widget della ricerca
     return [i for i in st.session_state.r.smembers("sys:user_list") if i.startswith(pattern) and i!=st.session_state.user]
@@ -68,7 +70,7 @@ if conf_remove and selected_friends:
     st.session_state.r.hdel(f"st:friendList:{st.session_state.user}", *selected_friends)
     # Se il pulsante di conferma per la rimozione degli amici viene schiacciato E ci sono amici da rimuovere allora manda un hdel
     st.success('Removed your buddies.')
-    #st.rerun()
+    st.rerun()
 
  #   st.session_state.r.hset(f"{u}")
 
@@ -96,7 +98,7 @@ if add_button:
         friends = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
         friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
         st.success(f'Great! You added {friend}')
-        st.image('pages/pepedance.gif')
+        st.sidebar.image('pages/pepedance.gif')
         time.sleep(1)
         st.rerun()
         # Se viene schiacciato il pulsante per aggiungere un amico viene controllato se quell'utente esistçe effetivamente. 

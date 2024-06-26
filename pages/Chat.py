@@ -4,27 +4,9 @@ import time
 from datetime import datetime
 from Login import streamlit_logout
 import redis
-from streamlit_autorefresh import st_autorefresh
+#from streamlit_autorefresh import st_autorefresh
 
-def connect():
-    r = redis.Redis(
-        host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
-        port=16230,
-        password='y6ORUWqEjBvQZU3ICfuV8dgU8glOYFwL',
-        decode_responses=True
-    )
-    return r
-
-def thread_function_test():
-    r = connect()
-    pubsub = r.pubsub()
-    pubsub.subscribe('test')
-    threading.Timer(5.0, thread_function_test).start()
-    st.session_state.p = pubsub
-    new_mess = st.session_state.p.get_message()
-    if new_mess: print(new_mess)
-    #for message in pubsub.listen():
-        #print('new message!')
+print('Loading chat page')
 
 def pushMessagesInSession(idroom:str, timed=False):
     #Questo metodo, data un room ID, ottiene i messaggi di quella room, li formatta e li inserisce nella sessione.
@@ -80,7 +62,6 @@ else:
     st.switch_page('Login.py')
     # Solito redirect se non sei loggato.
 
-st.markdown('<div class="floating"></div>', unsafe_allow_html=True)
 if selection:
     st.title(f'Chat with {selection}')
 else:
@@ -123,56 +104,9 @@ if prompt := st.chat_input("What is up my man?"):
         # Refresho la lista dei messaggi
         st.rerun()
         # Faccio un rerun se viene inviato un nuovo messaggio così da aggiornare la chat.
-    
-#pubsub = st.session_state.r.pubsub()
-#pubsub.subscribe('test')
-#msg = pubsub.get_message()
-#msg
 
-#for message in pubsub.listen():
-    #print(message)
-    #st.rerun()
-
-    # Display assistant response in chat message container
- #   with st.chat_message(selection):
-   #     response = st.write_stream(response_generator())
-    # Add assistant response to chat history
-   # st.session_state.messages.append({"role": selection, "content": response})
-
-# L'autorefresh è viabile, devo solo trovare un modo per pigliare meno roba per renderlo smooth.
-# trova nuovi messaggi con il get message
 
 if st.sidebar.refresh_checkbox:
-    count = st_autorefresh(interval=1500, key="fizzbuzzcounter")
-    hide_streamlit_style = """
-                    <style>
-                    div[data-testid="stToolbar"] {
-                    visibility: hidden;
-                    height: 0%;
-                    position: fixed;
-                    }
-                    div[data-testid="stDecoration"] {
-                    visibility: hidden;
-                    height: 0%;
-                    position: fixed;
-                    }
-                    div[data-testid="stStatusWidget"] {
-                    visibility: hidden;
-                    height: 0%;
-                    position: fixed;
-                    }
-                    #MainMenu {
-                    visibility: hidden;
-                    height: 0%;
-                    }
-                    header {
-                    visibility: hidden;
-                    height: 0%;
-                    }
-                    footer {
-                    visibility: hidden;
-                    height: 0%;
-                    }
-                    </style>
-                    """
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+    pass
+    #count = st_autorefresh(interval=1500, key="fizzbuzzcounter")
+    

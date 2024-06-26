@@ -60,10 +60,11 @@ if 'user' not in st.session_state:
         st.toast("Login successful")
         st.success(f"Congratulations, {username}. You're in.")
         #r.sadd(f"sys:user_list", username)
-        #st.sidebar.image("pages/pepedance.gif")
+        st.sidebar.image("pages/pepedance.gif")
         #time.sleep(1)
         st.session_state['user'] = username
-        st.switch_page('pages/Friends.py')
+        print('I will now attempt redirect')
+        #st.switch_page('pages/Friends.py')
 
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
     else:
@@ -78,10 +79,10 @@ if 'user' not in st.session_state:
         st.success(f"Congratulations, {username}. You're in.")
         #r.sadd(f"sys:user_list", username)
         #time.sleep(1)
-        #st.image("pages/pepedance.gif")
+        st.image("pages/pepedance.gif")
         st.session_state['user'] = username
 
-        st.switch_page('pages/Friends.py')
+        #st.switch_page('pages/Friends.py')
         # Switcho pagina se la registrazione è andata a buon fine. 
     else:
         'Username already exists.'
@@ -89,6 +90,6 @@ if 'user' not in st.session_state:
 
 if 'user' in st.session_state:
     st.empty()
-    st.switch_page('pages/Friends.py')
+    # st.switch_page('pages/Friends.py')
 # Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
 

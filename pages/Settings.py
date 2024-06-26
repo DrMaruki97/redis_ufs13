@@ -3,6 +3,7 @@
 import streamlit as st
 from Login import streamlit_logout
 import time
+print('Loading settings page')
 st.title('Settings')
 
 if 'user' in st.session_state:
