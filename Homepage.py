@@ -16,7 +16,8 @@ def streamlit_login(user, password, r):
         if actualPass==str(hash_pwd(password)):
             print('Password Match')
             st.session_state['user'] = user
-            st.session_state['status'] = r.get('st:dnd:user:'+user)
+            st.session_state['status'] = r.set('st:dnd:user:'+user, '1')
+            st.session_state['status'] = '1'
             st.session_state['redirect'] = True
             #se i dati sono corretti inserisce nella sessione di streamlit l'username e lo 'status', ovvero 'disponibile' o 'dnd'
             return True
