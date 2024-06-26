@@ -46,9 +46,9 @@ if 'user' in st.session_state:
             if clearChat:
                 st.session_state.r.delete(f'st:room:{friendList[selection]}')
                 pushMessagesInSession(friendList[selection])
-            timedChat = st.toggle(label=f'*Timed chat* with {selection} 💣')
-            if timedChat:
-                pass
+        timedChat = st.toggle(label=f'*Timed chat*💣')
+        if timedChat:
+            pass
                 
         st.sidebar.refresh_checkbox = st.toggle(label=':rainbow["Live" updates]')
         logout_button = st.sidebar.button(label=':orange[Logout]')
@@ -62,7 +62,7 @@ if 'user' in st.session_state:
     
 else:
     st.info('Please Login from the Home page and try again.')
-    st.switch_page('Homepage.py')
+    st.switch_page('Homepage.py')   
     # Solito redirect se non sei loggato.
 
 if timedChat and selection:
