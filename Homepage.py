@@ -83,23 +83,23 @@ if 'user' not in st.session_state:
     #Se invece l'utente preferisce registrarsi...
     if not r.exists('user:'+username):
         sign_up(username, password)
+        st.session_state['status'] = r.set('st:dnd:user:'+username, '0')
+        st.session_state['status'] = '0'
         #r.set(f"user:{username.lower()}", hash_pwd(pwd))
         #r.incrby("sys:id_user", 1)
         #r.set(f"id_user:{username}", r.get("sys:id_user"))
         st.success(f"Congratulations, {username}. You're in.")
         #r.sadd(f"sys:user_list", username)
         #time.sleep(1)
-        st.image("pages/pepedance.gif")
+        st.sidebar.image("pages/pepedance.gif")
         st.session_state['user'] = username
+        time.sleep(1)
+        st.rerun()
 
         #st.switch_page('pages/Friends.py')
         # Switcho pagina se la registrazione è andata a buon fine. 
     else:
         'Username already exists.'
-
-if 'user' in st.session_state:
-    import time
-
 
 if 'user' in st.session_state:
     st.title('Settings')
