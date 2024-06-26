@@ -26,7 +26,7 @@ def hash_pwd(pwd):
 
 
 def id_maker(id_user, friend):
-    id = r.get(f"id_user:{friend}")
+    id = r.get(f"id_user:{friend.lower()}")
     if id < id_user:
         return f"{id}{id_user}"
     else:
@@ -51,13 +51,13 @@ def sign_up(username, pwd):
         c = r.set(f"user:{username.lower()}", hash_pwd(pwd))
         if c:
             id = r.incrby("sys:id_user", 1)
-            r.set(f"id_user:{username}",id)
+            r.set(f"id_user:{username.lower()}",id)
             r.sadd(f"sys:user_list", username)
             offset = r.get(f"id_user:{username}")
             r.setbit('sys:dndmap', int(offset), 0)
     else:
         return False  # utente già esistente
-    return True, r.get(f"id_user:{username}"), username
+    return True
 
 
 def login(username, pwd):

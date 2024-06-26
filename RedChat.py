@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
         if page == 'UserPage':
 
-            user_id = r.get(f'id_user:{user}')
+            user_id = r.get(f'id_user:{user.lower()}')
             
 
             while True:
