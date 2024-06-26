@@ -14,7 +14,7 @@ def pushMessagesInSession(idroom:str, timed=False):
     #Non potendo utilizzare i JSON su redis devo ricreare qualcosa di simile con Python
     # Ogni messaggio deve essere messages = [{timestamp:43499490, mittente:'pippo',messaggio:'ciao'},...]
     if timed:
-        messages = st.session_state.r.zrange(f"st:timed_room:{idroom}", 0, -1, withscores=True)
+        messages = st.session_state.r.zrange(f"st:room:*{idroom}", 0, -1, withscores=True)
     else:
         messages = st.session_state.r.zrange(f"st:room:{idroom}", 0, -1, withscores=True)
 
@@ -46,9 +46,10 @@ if 'user' in st.session_state:
             if clearChat:
                 st.session_state.r.delete(f'st:room:{friendList[selection]}')
                 pushMessagesInSession(friendList[selection])
-        timedChat = st.toggle(label=f'*Timed chat*💣')
-        if timedChat:
-            pass
+        timedChat = st.toggle(label=f'*Timed chat* 💣')
+        if timedChat and selection:
+            pushMessagesInSession(friendList[selection], timed=True)
+
                 
         st.sidebar.refresh_checkbox = st.toggle(label=':rainbow["Live" updates]')
         logout_button = st.sidebar.button(label=':orange[Logout]')
@@ -67,6 +68,7 @@ else:
 
 if timedChat and selection:
     st.title(f":red[Timed Chat] with {selection} ⏲️")
+    'Timed messages last only 60 seconds.'
 elif selection:
     st.title(f'Chat with :rainbow[{selection}]')
 else:
@@ -82,14 +84,21 @@ if selection:
 
     #y = threading.Thread(target=thread_function_test)
     #y.start()
+    if timedChat:
+        pushMessagesInSession(f"{friendList[selection]}", timed=True) 
+    else:
+        pushMessagesInSession(friendList[selection])
 
-    pushMessagesInSession(friendList[selection])
     # Nel momento in cui seleziono un amico con cui chattare vengono recuperati tutti i messaggi. 
 
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
             #sto IF serve a far cambiare l'icona del mittente. L'user loggato avrà un'icona personalizzata, così da renderlo distinguibile.
-            mess = st.markdown(f"**{message['mittente']}** *:gray[{message['timestamp']}:]* "+message['text'])    
+            if not timedChat:
+                mess = st.markdown(f"**{message['mittente']}** *:gray[{message['timestamp']}:]* "+message['text'])    
+            else:
+                mess = st.markdown(f":red[**{message['mittente']}**] *:gray[{message['timestamp']}:]* "+message['text'])    
+
 
 # Accept user input
 if prompt := st.chat_input("What is up my man?"):
@@ -98,17 +107,19 @@ if prompt := st.chat_input("What is up my man?"):
         # Se l'utente al quale stiamo scrivendo è su Do not disturb non riusciremo ad inserire un messaggio nella chat.
 
     else:
-        st.session_state.r.zadd(f'st:room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
+        if not timedChat and selection:
+            st.session_state.r.zadd(f'st:room:{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
         # Questa parte appende il messaggio nello z set della chatroom quando l'utente scrive qualcosa.
-        #st.session_state.r.publish
-        print(prompt)
-        st.session_state['r'].publish(channel = 'test', message = prompt)
-        #Provo a pushare il messaggio in un pubsub channell
-
-        pushMessagesInSession(friendList[selection])
+            pushMessagesInSession(friendList[selection])
         # Refresho la lista dei messaggi
-        st.rerun()
+            st.rerun()
         # Faccio un rerun se viene inviato un nuovo messaggio così da aggiornare la chat.
+        elif timedChat and selection:
+            st.session_state.r.zadd(f'st:room:*{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
+            st.session_state.r.expire(f'st:room:*{friendList[selection]}', 60)
+            pushMessagesInSession(f"{friendList[selection]}", timed=True)
+            st.rerun()
+
 
 
 if st.sidebar.refresh_checkbox:
