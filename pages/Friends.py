@@ -21,7 +21,7 @@ if 'user' in st.session_state:
             f":red[Do not disturb ⛔]"
         else:
             f":green[Available for chat ✅] "
-    logout_button = st.sidebar.button(label='Logout')
+    logout_button = st.sidebar.button(label=':orange[Logout]')
     # Questi codici servono ad aggiungere le robe nella sidebar.
 
     if logout_button:

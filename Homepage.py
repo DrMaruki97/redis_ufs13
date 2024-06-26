@@ -109,7 +109,7 @@ if 'user' in st.session_state:
         else:
             f":green[Available for chat ✅] "
 
-    logout_button = st.sidebar.button(label='Logout')
+    logout_button = st.sidebar.button(label=':orange[Logout]')
     if logout_button:
         streamlit_logout()
         st.switch_page('Homepage.py')

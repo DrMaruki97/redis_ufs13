@@ -42,13 +42,16 @@ if 'user' in st.session_state:
         # Questo hget mi fa tornare la friendlist, che altro non è che un dizionario. Pippo = {amico1 : chatroomID1, amico2 : chatroomID2}s
         selection = st.selectbox(label='Select who you wanna chat with.', options=friendList, index=None)
         if selection:
+            clearChat = st.button(label=f'Clear chat with {selection}')
+            if clearChat:
+                st.session_state.r.delete(f'st:room:{friendList[selection]}')
+                pushMessagesInSession(friendList[selection])
             timedChat = st.button(label=f'Create timed chat with {selection}')
             if timedChat:
                 pass
                 
-        st.sidebar.divider()
         st.sidebar.refresh_checkbox = st.checkbox(label='"Live" updates')
-        logout_button = st.sidebar.button(label='Logout')
+        logout_button = st.sidebar.button(label=':orange[Logout]')
 
 
 
@@ -63,7 +66,7 @@ else:
     # Solito redirect se non sei loggato.
 
 if selection:
-    st.title(f'Chat with {selection}')
+    st.title(f'Chat with :rainbow[{selection}]')
 else:
     st.title('Chat')
 
@@ -84,7 +87,7 @@ if selection:
     for message in st.session_state.chat:        
         with st.chat_message('user' if message['mittente']==st.session_state.user else message['mittente']):
             #sto IF serve a far cambiare l'icona del mittente. L'user loggato avrà un'icona personalizzata, così da renderlo distinguibile.
-            mess = st.markdown(f"*:gray[{message['timestamp']}:]* "+message['text'])    
+            mess = st.markdown(f"**{message['mittente']}** *:gray[{message['timestamp']}:]* "+message['text'])    
 
 # Accept user input
 if prompt := st.chat_input("What is up my man?"):
