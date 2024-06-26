@@ -1,5 +1,5 @@
 import streamlit as st
-from Login import streamlit_logout
+from Homepage import streamlit_logout
 import pandas as pd
 import time
 
@@ -26,11 +26,11 @@ if 'user' in st.session_state:
 
     if logout_button:
         streamlit_logout()
-        st.switch_page('Login.py')
+        st.switch_page('Homepage.py')
     # Se l'utente effettua il logout dal pulsante viene switchata la pagina a quella del login.
 else:
     st.info('Please Login from the Home page and try again.')
-    st.switch_page('Login.py')
+    st.switch_page('Homepage.py')
     # Questa parte di codice fa switchare la pagina a quella del login se qualcuno prova ad accedere a /friends.py senza essere loggato
 
 # Questa parte di codice mi permette di ottenere la lista amici dell'utente loggato.

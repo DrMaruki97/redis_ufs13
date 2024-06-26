@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 from datetime import datetime
-from Login import streamlit_logout
+from Homepage import streamlit_logout
 import redis
 from streamlit_autorefresh import st_autorefresh
 
@@ -54,12 +54,12 @@ if 'user' in st.session_state:
 
     if logout_button:
         streamlit_logout()
-        st.switch_page('Login.py')
+        st.switch_page('Homepage.py')
     # Solita sidebar
     
 else:
     st.info('Please Login from the Home page and try again.')
-    st.switch_page('Login.py')
+    st.switch_page('Homepage.py')
     # Solito redirect se non sei loggato.
 
 if selection:

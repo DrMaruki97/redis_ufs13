@@ -3,7 +3,7 @@ import redis
 from functions import hash_pwd, sign_up
 import time
 st.set_page_config(
-    page_title="Login",
+    page_title="Homepage",
     page_icon="🔥",
 )
 # Funzione che ti permette di loggare con streamlit
@@ -17,6 +17,7 @@ def streamlit_login(user, password, r):
             print('Password Match')
             st.session_state['user'] = user
             st.session_state['status'] = r.get('st:dnd:user:'+user)
+            st.session_state['redirect'] = True
             #se i dati sono corretti inserisce nella sessione di streamlit l'username e lo 'status', ovvero 'disponibile' o 'dnd'
             return True
         else:
@@ -25,6 +26,12 @@ def streamlit_login(user, password, r):
 def streamlit_logout():
     del st.session_state['user']
     # il logout semplicemente rimuove l'utente dalla sessione
+
+
+
+# Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
+
+
 
 r = redis.Redis(
     host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
@@ -64,6 +71,8 @@ if 'user' not in st.session_state:
         #time.sleep(1)
         st.session_state['user'] = username
         print('I will now attempt redirect')
+        time.sleep(1)
+        st.rerun()
         #st.switch_page('pages/Friends.py')
 
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
@@ -87,9 +96,61 @@ if 'user' not in st.session_state:
     else:
         'Username already exists.'
 
+if 'user' in st.session_state:
+    import time
+
 
 if 'user' in st.session_state:
-    st.empty()
-    # st.switch_page('pages/Friends.py')
-# Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
+    st.title('Settings')
+    with st.sidebar:
+        f"Currently logged in as **{st.session_state['user']}**"
+        if st.session_state['status'] == '1':
+            f":red[Do not disturb ⛔]"
+        else:
+            f":green[Available for chat ✅] "
+
+    logout_button = st.sidebar.button(label='Logout')
+    if logout_button:
+        streamlit_logout()
+        st.switch_page('Homepage.py')
+    st.write(f"Hello, **{st.session_state['user']}**")
+    # Solita roba per la sidebar
+
+
+    new_password = st.text_input(label="Choose a new password", placeholder=f'you better remember it')
+    # mostro la password corrente. chiaramente non è una buona practice ma mi è utile
+
+    DnD = st.toggle("Do not disturb")
+    update_button= st.button("Update", type="primary")
+    if update_button:
+        # Quando viene schiacciato il pulsante di update verifico cosa è selezionato e in base a quello piglia l'if giusto. Bruttissimo, ma funziona.
+        if new_password and DnD:
+            st.session_state.r.set('user:'+st.session_state.user, new_password)
+            st.toast('Changed password!')
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "1")
+            st.error('Activated do not disturb.', icon='⛔')
+            st.session_state['status'] = '1'
+            time.sleep(1)
+            st.rerun()
+        elif new_password:
+            st.session_state.r.set('user:'+st.session_state.user, hash_pwd(new_password))
+            st.toast('Changed password!')
+            time.sleep(1)
+            st.rerun()
+
+        elif DnD: 
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "1")
+            st.toast('Activated do not disturb.', icon='⛔')
+            st.session_state['status'] = '1'
+            time.sleep(1)
+            st.rerun()
+
+        else:
+            st.session_state.r.set('st:dnd:user:'+st.session_state.user, "0")
+            st.toast('Set status as available', icon='✔️')
+            st.session_state['status'] = '0'
+            time.sleep(1)
+            st.rerun()
+
+        
 
