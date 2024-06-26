@@ -7,10 +7,14 @@ def userList(pattern):
     # mi serve una lista di username per il widget della ricerca
     return [i for i in st.session_state.r.smembers("sys:user_list") if i.startswith(pattern) and i!=st.session_state.user]
 
+print('app load test')
+         
 if 'user' in st.session_state:
+    print('debug sidebar first load')
 # Se l'utente è loggato:
     with st.sidebar:
         f"Currently logged in as **{st.session_state['user']}**"
+        print('debug sidebar load')
         if st.session_state['status'] == '1':
             f":red[Do not disturb ⛔]"
         else:
@@ -28,7 +32,12 @@ else:
     # Questa parte di codice fa switchare la pagina a quella del login se qualcuno prova ad accedere a /friends.py senza essere loggato
 
 # Questa parte di codice mi permette di ottenere la lista amici dell'utente loggato.
-friends = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
+try:
+    friends = st.session_state.r.hgetall(f"st:friendList:{st.session_state.user}")
+    print('debug hget')
+except:
+    friends = []
+    print('debug friends')
 # con hgetall creo un dizionario degli amici
 friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
 # creo un dataframe da quel dizionario
@@ -59,7 +68,7 @@ if conf_remove and selected_friends:
     st.session_state.r.hdel(f"st:friendList:{st.session_state.user}", *selected_friends)
     # Se il pulsante di conferma per la rimozione degli amici viene schiacciato E ci sono amici da rimuovere allora manda un hdel
     st.success('Removed your buddies.')
-    st.rerun()
+    #st.rerun()
 
  #   st.session_state.r.hset(f"{u}")
 
@@ -90,7 +99,7 @@ if add_button:
         st.image('pages/pepedance.gif')
         time.sleep(1)
         st.rerun()
-        # Se viene schiacciato il pulsante per aggiungere un amico viene controllato se quell'utente esiste effetivamente. 
+        # Se viene schiacciato il pulsante per aggiungere un amico viene controllato se quell'utente esistçe effetivamente. 
         # Se esiste viene aggiunto nella hash lista amici
 
     else: 

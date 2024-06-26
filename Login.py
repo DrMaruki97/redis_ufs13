@@ -1,12 +1,11 @@
 import streamlit as st
 import redis
 from functions import hash_pwd, sign_up
-
+import time
 st.set_page_config(
     page_title="Login",
     page_icon="🔥",
 )
-
 # Funzione che ti permette di loggare con streamlit
 def streamlit_login(user, password, r):
     #prende in entrata user, password e l'oggetto R per la connessione al DB
@@ -17,7 +16,7 @@ def streamlit_login(user, password, r):
         if actualPass==str(hash_pwd(password)):
             print('Password Match')
             st.session_state['user'] = user
-            st.session_state['status'] = r.get('dnd:user:'+user)
+            st.session_state['status'] = r.get('st:dnd:user:'+user)
             #se i dati sono corretti inserisce nella sessione di streamlit l'username e lo 'status', ovvero 'disponibile' o 'dnd'
             return True
         else:
@@ -44,6 +43,7 @@ placeholder = st.empty()
 
 # Insert a form in the container
 if 'user' not in st.session_state:
+  st.cache_data.clear()
   login_form = st.form(key='login_form')
   username = login_form.text_input(label='username')
   password = login_form.text_input(label='password', type='password')
@@ -58,7 +58,13 @@ if 'user' not in st.session_state:
     if login:
         st.session_state['user'] = username
         st.toast("Login successful")
+        st.success(f"Congratulations, {username}. You're in.")
+        #r.sadd(f"sys:user_list", username)
+        #st.sidebar.image("pages/pepedance.gif")
+        #time.sleep(1)
+        st.session_state['user'] = username
         st.switch_page('pages/Friends.py')
+
         #se il login è avvenuto metto lo username nella sessione e switcho alla pagina degli amici
     else:
         st.error("Login failed")
@@ -69,10 +75,12 @@ if 'user' not in st.session_state:
         #r.set(f"user:{username.lower()}", hash_pwd(pwd))
         #r.incrby("sys:id_user", 1)
         #r.set(f"id_user:{username}", r.get("sys:id_user"))
-        f"Congratulations, {username}. You're in."
+        st.success(f"Congratulations, {username}. You're in.")
         #r.sadd(f"sys:user_list", username)
-
+        #time.sleep(1)
+        #st.image("pages/pepedance.gif")
         st.session_state['user'] = username
+
         st.switch_page('pages/Friends.py')
         # Switcho pagina se la registrazione è andata a buon fine. 
     else:

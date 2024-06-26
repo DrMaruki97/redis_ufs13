@@ -3,10 +3,8 @@ import random
 import time
 from datetime import datetime
 from Login import streamlit_logout
-import threading
 import redis
 from streamlit_autorefresh import st_autorefresh
-
 
 def connect():
     r = redis.Redis(
