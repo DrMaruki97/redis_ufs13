@@ -10,71 +10,53 @@ st.set_page_config(
     page_icon="🔥",
 )
 
-from streamlit.errors import NoSessionContext
-from streamlit.runtime.scriptrunner.script_run_context import (
-    SCRIPT_RUN_CONTEXT_ATTR_NAME,
-    get_script_run_ctx,
-)
 
-T = TypeVar("T")
+def my_handler(message):
+        print('MY HANDLER: ', message['data'])
+        with open("test.txt", 'a') as test:
+              test.write("\n" + message['data'])
+pub = st.session_state.r.pubsub()
+pub.subscribe(**{'my-channel': my_handler})
+pub.get_message()
+thread = pub.run_in_thread(sleep_time=0.001)
+
+text_area_ = st.text_area(label='type')
+send = st.button(label='Rereun')
+toggle = st.toggle('Auto update.')
+if send:
+    st.session_state.r.publish('my-channel', text_area_)
 
 
-def with_streamlit_context(fn: T) -> T:
-    """Fix bug in streamlit which raises streamlit.errors.NoSessionContext."""
-    ctx = get_script_run_ctx()
 
-    if ctx is None:
-        raise NoSessionContext(
-            "with_streamlit_context must be called inside a context; "
-            "construct your function on the fly, not earlier."
-        )
 
-    def _cb(*args: Any, **kwargs: Any) -> Any:
-        """Do it."""
+            
 
-        thread = threading.current_thread()
-        do_nothing = hasattr(thread, SCRIPT_RUN_CONTEXT_ATTR_NAME) and (
-            getattr(thread, SCRIPT_RUN_CONTEXT_ATTR_NAME) == ctx
-        )
 
-        if not do_nothing:
-            setattr(thread, SCRIPT_RUN_CONTEXT_ATTR_NAME, ctx)
+#val = st.slider("Value", 0, 50, 0)
+#val = st.session_state.pub.subscribe(**{'my-channel': my_handler})
 
-        # Call the callback.
-        ret = fn(*args, **kwargs)
+st.session_state['queue'] = ['']
 
-        if not do_nothing:
-            # Why delattr? Because tasks for different users may be done by
-            # the same thread at different times. Danger danger.
-            delattr(thread, SCRIPT_RUN_CONTEXT_ATTR_NAME)
-        return ret
+def stream_data(message):
+    for word in message.split(' '):
+        yield word + " "
+        time.sleep(0.03)
 
-    return cast(T, _cb)
 
-panel = st.container(height=100)
+while toggle:
+    time.sleep(0.5)
+    while True:
+        with open("test.txt", 'r') as test2:
+            read = test2.readlines()[-1]
+            if read != st.session_state['queue'][-1]:
+                st.session_state['queue'].append(read)
+                st.write_stream(stream_data(st.session_state['queue'][-1]))
+            break
 
-def do_work(callback, data):
-    nums = [n for n in range(1, data + 1)]
-    callback(nums)
-        
-def report_progress(args):
-    with panel:
-        st.write(str(args))
-
-val = st.slider("Value", 0, 50, 0)
-
-@with_streamlit_context
-def my_callback(*args):
-    report_progress(*args)
-
-thread = threading.Thread(target=do_work, kwargs={"callback":my_callback, "data": val})
-thread.start()
-thread.join()
 
 
 
 #Testing multithreading
-'Loading chat page'
 #def my_handler(message):
         #print('MY HANDLER: ', message['data'])
         #st.write(message['data'])
