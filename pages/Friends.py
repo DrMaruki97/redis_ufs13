@@ -42,6 +42,10 @@ except:
     print('debug friends')
 # con hgetall creo un dizionario degli amici
 friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
+friends_df['Status'] = [st.session_state.r.get(f"st:dnd:user:{friend}") for friend in friends]
+friends_df['Status'] = friends_df['Status'].replace(to_replace='0', value='Available')
+friends_df['Status'] = friends_df['Status'].replace(to_replace='1', value='Do not disturb')
+friends_df['RoomID'] = [friends[friend] for friend in friends]
 # creo un dataframe da quel dizionario
 friends_df['Select'] = [False for friend in friends]
 # creo una colonna con valori True o False per ogni amico nella friendlist. Serve per poterli rimuovere. 
@@ -51,7 +55,7 @@ st.title('Search a user')
 default_label = 'Type a username, even if partial.'
 friend = st.text_input(label=default_label)
 selected_friends = []
-col1, col2 = st.columns(2)
+col1, col2 = st.columns([60,40])
 with col1:
     if not friends:
         'It seems like you have no friends.'
@@ -66,6 +70,7 @@ with col2:
     add_button = st.button(label='Add a friend')
     search_button = st.button(label='Search')
     conf_remove = st.button(label=f'Remove {selected_friends} user from friendlist')
+    get_user_list = st.button(label='Get full user base')
 if conf_remove and selected_friends:
     st.session_state.r.hdel(f"st:friendList:{st.session_state.user}", *selected_friends)
     # Se il pulsante di conferma per la rimozione degli amici viene schiacciato E ci sono amici da rimuovere allora manda un hdel
@@ -77,6 +82,12 @@ if conf_remove and selected_friends:
 st.divider()
 # una linea ------------
 
+def add_friend(friend_to_add):
+    idroom = [int(st.session_state.r.get('id_user:'+friend_to_add)), int(st.session_state.r.get('id_user:'+st.session_state.user))]
+    idroom.sort()
+    idroom = ':'.join([str(id) for id in idroom])
+    st.session_state.r.hset(f"st:friendList:{st.session_state.user}", friend_to_add, idroom)
+
 # Roba per aggiungere gli amici 
 if search_button and friend:
     st.title('Search results')
@@ -85,6 +96,7 @@ if search_button and friend:
     if len(resultList)==0:
         st.write('There are no users by that name.')
         st.image('pages/pepewhat.png')
+
 if add_button:
     if st.session_state.r.exists('user:'+friend) and friend != st.session_state.user:
         idroom = [int(st.session_state.r.get('id_user:'+friend)), int(st.session_state.r.get('id_user:'+st.session_state.user))]
@@ -106,4 +118,6 @@ if add_button:
 
     else: 
         st.error("User simply ain't there buddy")
+if get_user_list:
+    [i for i in st.session_state.r.smembers("sys:user_list")]
 
