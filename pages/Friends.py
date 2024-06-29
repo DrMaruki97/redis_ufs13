@@ -55,7 +55,7 @@ st.title('Search a user')
 default_label = 'Type a username, even if partial.'
 friend = st.text_input(label=default_label)
 selected_friends = []
-col1, col2 = st.columns([60,40])
+col1, col2 = st.columns([7,3])
 with col1:
     if not friends:
         'It seems like you have no friends.'
@@ -67,10 +67,10 @@ with col1:
         #Trasformo il dataframe in un dataframe editabile. Così posso selezionare quali utenti rimuovere
 with col2:
     selected_friends = [user for user in friends_df[friends_df['Select']==True]['User']] if friends else []
-    add_button = st.button(label='Add a friend')
-    search_button = st.button(label='Search')
-    conf_remove = st.button(label=f'Remove {selected_friends} user from friendlist')
-    get_user_list = st.button(label='Get full user base')
+    add_button = st.button(label='Add a friend', use_container_width=True)
+    search_button = st.button(label='Search', use_container_width=True)
+    conf_remove = st.button(label=f'Remove {selected_friends} user from friendlist', use_container_width=True)
+    get_user_list = st.button(label='Get full user base', use_container_width=True)
 if conf_remove and selected_friends:
     st.session_state.r.hdel(f"st:friendList:{st.session_state.user}", *selected_friends)
     # Se il pulsante di conferma per la rimozione degli amici viene schiacciato E ci sono amici da rimuovere allora manda un hdel
