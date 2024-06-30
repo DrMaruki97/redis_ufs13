@@ -38,7 +38,7 @@ La homepage permette di loggare o di registrarsi.
 
 Restituisce messaggi di errore se le credenziali sono errate, messaggi di successo se sono corrette. 
 
-![pages/readmegifs/auth.gif](Streamlit%20Interface%20README%20908b5c312aca40bf944c5a6824bf6a7a/NVIDIA_Share_C1ZTxPXmge.gif)
+![AUTHgif](pages/readmegifs/auth.gif)
 
 Una volta connessi la Homepage cambia aspetto:
 
@@ -50,7 +50,7 @@ La sidebar presenta il tuo stato (Disponibile, Do not disturb) e c’è un pulsa
 
 **Se si effettua un refresh (f5) della pagina si resetta la sessione di Streamlit e bisogna riloggare. è possibile loggare con piu’ utenti aprendo piu’ pagine dell’interfaccia.** 
 
-![pages/readmegifs/dnd.gif](Streamlit%20Interface%20README%20908b5c312aca40bf944c5a6824bf6a7a/NVIDIA_Share_6URlF658mC.gif)
+![DNDgif](pages/readmegifs/dnd.gif)
 
 ## Gestione lista amici
 
@@ -63,7 +63,7 @@ La lista amici viene gestita dalla pagina Friends.py
 - Ottenere l’intera user base [gif]
 - Aggiungere un amico se viene inserito l’username corretto [gif]
 
-![pages/readmegifs/friends.gif](Streamlit%20Interface%20README%20908b5c312aca40bf944c5a6824bf6a7a/NVIDIA_Share_QMKdf3S2A4.gif)
+![FRIENDSgif](pages/readmegifs/friends.gif)
 
 ## Chat Page
 
@@ -75,7 +75,7 @@ Una volta selezionato un amico viene caricata l’intera chat, che è possibile 
 
 è inoltre possibile passare alle Timed Chats con l’utente selezionato. Le Timed Chats hanno un expire di 60 secondi dall’ultimo messaggio inviato.
 
-![pages/readmegifs/chat.gif](Streamlit%20Interface%20README%20908b5c312aca40bf944c5a6824bf6a7a/NVIDIA_Share_himOb9LHtu.gif)
+![CHATgif](pages/readmegifs/chat.gif)
 
 ## Limitazioni di Streamlit, PubSub
 
@@ -94,7 +94,7 @@ Inizialmente ho pensato all’async io di Python. Ma non sapendo come funziona e
 
 I nuovi messaggi vengono visualizzati con un effetto “stream” stile chatGPT.
 
-![pages/readmegifs/pubsub.gif](Streamlit%20Interface%20README%20908b5c312aca40bf944c5a6824bf6a7a/NVIDIA_Share_bAZkOgkZVP.gif)
+![PUBSUBgif](pages/readmegifs/pubsub.gif)
 
 ## Redis Schema
 
