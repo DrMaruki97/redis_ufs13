@@ -34,10 +34,6 @@ pip install redis
 python RedChat.py
 ```
 or
-```cmd
-docker run RedChat 
-```
-or 
 [try our GUI RedChat webapp](README_Interface.md)
 
 
