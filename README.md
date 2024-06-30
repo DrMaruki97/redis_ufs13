@@ -39,7 +39,7 @@ or
 docker run RedChat 
 ```
 or 
-[try our GUI RedChat webapp]("README_Interface.md")
+[try our GUI RedChat webapp](README_Interface.md)
 
 
 ## Usage
