@@ -48,16 +48,16 @@ Create a new account, set a pw and a username. Add your friends and start to cha
 We provided a clear and simple TUI, created thinking about ease of use and clarity.
 
 Guide:
-> Password must be 3-16 characters
-> Username must be unique
-> After sign up or login, the menu gets displayed, input the number of the function desired
-> You can't chat if you don't have any friends, use "2) Rubrica" command to add one first
-> So use 1) to chat, you can choose between "Timed" (the chat will be detroyed after 60 seconds from the last msg) or not
-> If you choose someone with prior chat history, you will get the last ten messages exchanged with time stamps
-> Close the chat with "esc"
-> You can activate the DnD mode (no one can send you messages) with command "3. Dnd"
-> You can change the password with command "4."
-> Use "5. Logout" to authenticate with a different account or exit the application
+1. Password must be 3-16 characters
+2. Username must be unique
+3. After sign up or login, the menu gets displayed, input the number of the function desired
+4. You can't chat if you don't have any friends, use "2) Rubrica" command to add one first
+5. So use 1) to chat, you can choose between "Timed" (the chat will be detroyed after 60 seconds from the last msg) or not
+6. If you choose someone with prior chat history, you will get the last ten messages exchanged with time stamps
+7. Close the chat with "esc"
+8. You can activate the DnD mode (no one can send you messages) with command "3. Dnd"
+9. You can change the password with command "4."
+10. Use "5. Logout" to authenticate with a different account or exit the application
 
 How it works:
 - When you sign up the system:
