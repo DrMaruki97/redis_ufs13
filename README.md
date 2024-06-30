@@ -39,8 +39,8 @@ or
 docker run RedChat 
 ```
 or 
+[try our GUI RedChat webapp]("README_Interface.md")
 
-try our GUI RedChat webapp 
 
 ## Usage
 
@@ -53,7 +53,6 @@ We provide a clear and simple TUI, created thinking about ease of use and clarit
 To use it with your own Redis database create add to the config file your credential 
 
 ## License
-
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
