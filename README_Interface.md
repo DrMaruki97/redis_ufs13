@@ -8,7 +8,7 @@ Streamlit è molto utilizzato nella data science per la sua velocità nel creare
 
 Personalmente mi piace utilizzarlo perchè velocizza significativamente il processo di sviluppo: quando modifichi un codice Python i cambiamenti vengono visualizzati in tempo reale sulla web interface di Streamlit. Questo mi permette di iterare molto piu’ velocemente.
 
-Inoltre [ha dei widget per cha ttare con le LLM](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps), che ho pensato potessero essere utilizzati per creare una chat con altri utenti.
+Inoltre [ha dei widget per chattare con le LLM](https://docs.streamlit.io/develop/tutorials/llms/build-conversational-apps), che ho pensato potessero tornare utili per creare una chat con altri utenti.
 
 Detto ciò, Streamlit ha delle limitazioni di cui parlerò in seguito.
 
@@ -16,7 +16,12 @@ Detto ciò, Streamlit ha delle limitazioni di cui parlerò in seguito.
 
 Far partire l’interfaccia è molto semplice.
 
-Basta installare le librerie presenti nei requirements (ovvero Redis e Streamlit) e inizializzare la web interface con:
+Basta installare le librerie presenti nei requirements (ovvero Redis e Streamlit)
+```python
+pip install streamlit
+pip install redis-py
+```
+e inizializzare la web interface con:
 
 ```python
 streamlit run Homepage.py
@@ -24,17 +29,15 @@ streamlit run Homepage.py
 
 è inoltre possibile fruire della chat attraverso [redischat.streamlit.app](http://redischat.streamlit.app) . Sconsiglio di chattare in tempo reale da lì. 
 
-L’intero interfaccia di Streamlit è contenuta in 3 files:
+L’intera interfaccia di Streamlit è contenuta in 3 files:
 
-- [Homepage.py](http://Homepage.py) per la prima pagina
-- pages/Chat
-- pages/Friends
+- [Homepage.py](http://Homepage.py)
+- pages/Chat.py
+- pages/Friends.py
 
 ## Autenticazione
 
-La prima pagina del sito è la “Homepage”. 
-
-La homepage permette di loggare o di registrarsi. 
+La prima pagina del sito è la “Homepage”, che inizialmente permette di loggare o registrarsi.
 
 Restituisce messaggi di errore se le credenziali sono errate, messaggi di successo se sono corrette. 
 
@@ -58,10 +61,10 @@ La lista amici viene gestita dalla pagina Friends.py
 
 è possibile:
 
-- Cercare utenti attraverso la ricerca parziale [gif]
-- Visualizzare lo status dei propri amici e rimuoverli dalla lista in gruppo [gif]
-- Ottenere l’intera user base [gif]
-- Aggiungere un amico se viene inserito l’username corretto [gif]
+- Cercare utenti attraverso la ricerca parziale 
+- Visualizzare lo status dei propri amici e rimuoverli dalla lista in gruppo 
+- Ottenere l’intera user base 
+- Aggiungere un amico se viene inserito l’username corretto 
 
 ![FRIENDSgif](pages/readmegifs/friends.gif)
 
@@ -85,7 +88,7 @@ Quindi non è possibile inizializzare un thread che permetta ad un oggetto PubSu
 
 Quindi dovevo trovare un modo per sfruttare il PubSub utilizzando un singolo Thread. 
 
-Inizialmente ho pensato all’async io di Python. Ma non sapendo come funziona e non avendo tempo di impararlo ho realizzato qualcosa di molto piu’ semplice:
+Inizialmente ho pensato all’async/io di Python. Ma non sapendo come funziona e non avendo tempo di impararlo ho realizzato qualcosa di molto piu’ semplice:
 
 - Una volta selezionato un amico vengono caricati i messaggi.
 - Se l’utente invia un messaggio i messaggi vengono “ricaricati”.
@@ -132,6 +135,5 @@ Rooms
 - Le room per chattare hanno un id univoco composto dagli userID dei due utenti, ordinati dal piu’ piccolo al piu’ grande e separati da ‘ : ’ . Vengono salvati nella friendList.
     - Se pippo (id_user = 2) aggiungerà paperino (id_user = 1) allora i due chatteranno in una room che come id ha 1:2. L’id di questa room verrà salvata nella friendlist di Pippo come { ‘paperino’ = ‘1:2’ }
         - Le chat a tempo seguono la stessa logica ma hanno un asterisco prima dell’ID (*1:2)
-- [*zset*] **st:room:userID_1:userID_2** = [ … ]
-    - Esempio: Pippo (iduser = 2) aggiunge paperino (iduser = 1) agli amici. Viene creata una room con key st:room:1:2.
-- Le chat sono degli zset dove lo score di ogni messaggio è un timestamp. Da quel timestamp viene ricostruito il giorno, l’ora.
+- [*zset*] **st:room:userID_1:userID_2** = [ 'messaggio1':timestamp1, 'messaggio2':timestamp2 ...]
+- Le chat sono degli zset dove lo score di ogni messaggio è un timestamp. Da quel timestamp viene ricostruita la data e l'ora nella chat.
