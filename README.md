@@ -1,6 +1,6 @@
 # RedChat
 
-Simple instant messagging software based on python and Redis database.
+Simple instant messaging software based on python and Redis database.
 
 You can:
 - Create a new account or Login
@@ -42,15 +42,57 @@ or
 [try our GUI RedChat webapp](README_Interface.md)
 
 
-## Usage
+## Usage and how it works
 
 Create a new account, set a pw and a username. Add your friends and start to chat! 
+We provided a clear and simple TUI, created thinking about ease of use and clarity.
 
-We provide a clear and simple TUI, created thinking about ease of use and clarity.
+Guide:
+> Password must be 3-16 characters
+> Username must be unique
+> After sign up or login, the menu gets displayed, input the number of the function desired
+> You can't chat if you don't have any friends, use "2) Rubrica" command to add one first
+> So use 1) to chat, you can choose between "Timed" (the chat will be detroyed after 60 seconds from the last msg) or not
+> If you choose someone with prior chat history, you will get the last ten messages exchanged with time stamps
+> Close the chat with "esc"
+> You can activate the DnD mode (no one can send you messages) with command "3. Dnd"
+> You can change the password with command "4."
+> Use "5. Logout" to authenticate with a different account or exit the application
+
+How it works:
+- When you sign up the system:
+  - If usr and pwd are valid, the user is added to the user list (a set)
+  - There's a counter in Redis that increase with the number of users
+  - An ID is created from that counter (f.e. the first user has id = "1")
+  - A system bitmap is used to mark if a user is on DND mode (1 == active), each bit is a different user (we use the ID value to index it)
+  - An istance with the username as key is saved, the value is the password hashed
+  - Each user has a contact list, is made with a set in Redis
+- When you chat:
+  - An unique ID is created for each room (user1ID & user2ID, with user1 the user with the lower ID)
+  - The chat history is saved in a z-set, the score is the time (unix epoch time)
+  - The chat function itself is based on the use of a channel associated with the room ID
+  - The partecipants of a chat are both publishers and subscribers, each message is published and saved in the z-set at the same time
+  - Timed chat have a special character at the beggining of the room ID
+  - If it is a timed chat, the system, with the use of Redis function EXPIRE, deletes the chat after 60 seconds from the last message
+  - The group chat are intended as "public rooms" with custom alphabetical strings, you can enter is one of the public room or create one
+- Other functions:
+  - The password is hashed with a simple function
+  - When the user changes his password, the system performs a SET and change the value of the password
+  - When the user activate DnD mode, the system performs a SET and change the value of the bit with index = user_ID to "1"
+  - You can only use the allowed numbers in the menu
+  - When a friend is removed the user is removed from the contacts but the chat is still saved but not accessible
+
+A note on the project:
+
+The software had different stages, there were:
+- Two terminal interfaces and one graphic interface that works (slightly) differently
+- You can follow up the commits to discover the evolution of the project and the failed attempts
+- Many files are saved in the "experimental" folder where you can check our experiments
+- The definitive software (1.0) mains are RedChat (TUI and principal release) and Homepage (for the GUI)
 
 ## Configuration 
 
-To use it with your own Redis database create add to the config file your credential 
+To use it with your own Redis database create and add to the config file your Redis server host name and password (work in progress)
 
 ## License
 
@@ -66,7 +108,9 @@ GNU General Public License for more details.
 
 ## Authors and Acknowledgments
 
-adish_rmr
-Dr_Mariuki97
-Alexandrazzena
-davidino
+@adish-rmr
+@DrMaruki97
+@alexandraazzena
+@arct0r
+
+
