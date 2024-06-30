@@ -5,7 +5,7 @@
 3. [Autenticazione](#autenticazione)
 5. [Gestione lista amici](#gestione-lista-amici)
 6. [Chat Page](#chat-page)
-7. [Limitazioni di Streamlit, PubSub](#limitazioni-di-streamlit,-pubsub)
+7. [Limitazioni di Streamlit, PubSub in Single Thread](#limitazioni-di-streamlit,-pubsub)
 8. [Redis Schema](#redis-schema)
 
 ## Framework utilizzato
@@ -88,7 +88,7 @@ Una volta selezionato un amico viene caricata l’intera chat, che è possibile 
 
 ![CHATgif](pages/readmegifs/chat.gif)
 
-## Limitazioni di Streamlit, PubSub
+## Limitazioni di Streamlit, PubSub in Single Thread
 
 Tentando di implementare il Pub/Sub ho scoperto che Streamlit non supporta il multithreading. 
 
