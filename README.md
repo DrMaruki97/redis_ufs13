@@ -3,8 +3,7 @@
 Simple instant messaging software based on python and Redis database.
 
 You can:
-- Create a new account or Login
-- Search your friends and add them 
+- Search your friends and add them
 - Chat with your friends in real time
 - Timed chat and group chat available
 - Activate Do-Not-Disturb mode
@@ -43,9 +42,6 @@ or
 
 
 ## Usage and how it works
-
-Create a new account, set a pw and a username. Add your friends and start to chat! 
-We provided a clear and simple TUI, created thinking about ease of use and clarity.
 
 Guide:
 1. Password must be 3-16 characters
