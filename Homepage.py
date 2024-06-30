@@ -8,6 +8,9 @@ st.set_page_config(
 )
 # Funzione che ti permette di loggare con streamlit
 def streamlit_login(user, password, r):
+    if user in ['', ' ']:
+        st.error('Invalid credentials.')
+        return False
     #prende in entrata user, password e l'oggetto R per la connessione al DB
     if r.exists("user:"+user)==1:
         print('It exists!')
@@ -81,7 +84,9 @@ if 'user' not in st.session_state:
         st.error("Login failed")
   if register_button:
     #Se invece l'utente preferisce registrarsi...
-    if not r.exists('user:'+username):
+    if (username or password) in ['', ' ']:
+        st.error('Invalid credentials.') 
+    elif not r.exists('user:'+username):
         sign_up(username, password)
         st.session_state['status'] = r.set('st:dnd:user:'+username, '0')
         st.session_state['status'] = '0'

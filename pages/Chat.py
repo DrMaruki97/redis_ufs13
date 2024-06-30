@@ -61,7 +61,7 @@ if 'user' in st.session_state:
         # Se è attivo il toggle per pushare i messaggi allora li recupero da una timed chat.
                 
         st.sidebar.refresh_checkbox = st.toggle(label=':rainbow[**"Live" updates**]')
-        logout_button = st.sidebar.button(label=':orange[Logout]')
+        logout_button = st.sidebar.button(label=':orange[Logout]', key='asjsdajks')
         # Pulsanti per ottenere i messaggi in tempo reale e per il logout button
 
     if logout_button:
