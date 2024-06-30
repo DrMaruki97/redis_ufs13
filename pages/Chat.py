@@ -87,7 +87,7 @@ if not selection and not friendList:
     st.image('pages/sadpepe.gif')
     st.page_link('pages/Friends.py', label=':blue[**Switch to friends page.**]')
 elif not selection:
-    'Select a friend to start chatting.'
+    st.warning('Select a friend to start chatting.')
 
 
 def stream_data(message):
