@@ -82,7 +82,7 @@ Dalla Chat Page è possibile chattare con gli amici nella tua lista amici.
 
 Se non hai amici un messaggio ti incita ad aggiungerne. 
 
-Una volta selezionato un amico viene caricata l’intera chat, che è possibile cancellare attraverso il pulsante “Clear Chat” [gif]
+Una volta selezionato un amico viene caricata l’intera chat, che è possibile cancellare attraverso il pulsante “Clear Chat”
 
 è inoltre possibile passare alle Timed Chats con l’utente selezionato. Le Timed Chats hanno un expire di 60 secondi dall’ultimo messaggio inviato.
 
@@ -99,7 +99,7 @@ Quindi dovevo trovare un modo per sfruttare il PubSub utilizzando un singolo Thr
 Inizialmente ho pensato all’async/io di Python. Ma non sapendo come funziona e non avendo tempo di impararlo ho realizzato qualcosa di molto piu’ semplice:
 
 - Una volta selezionato un amico vengono caricati i messaggi.
-- Se l’utente invia un messaggio i messaggi vengono “ricaricati”.
+- Se l’utente invia un messaggio i messaggi vengono “ricaricati” e il messaggio viene pubblicato sull'istanza pubsub in un channel apposito.
     - questo effettua un rerun dei widget di streamlit, che non è un refresh della pagina
 - Attraverso il toggle “Live updates” viene inizializzato un ciclo while che ogni x secondi effettua un getMessage(). Se sono presenti nuovi messaggi li fa comparire sullo schermo.
 
