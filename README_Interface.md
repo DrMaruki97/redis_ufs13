@@ -1,5 +1,13 @@
 # Streamlit Interface README
 
+1. [Framework utilizzato](#framework-utilizzato)
+2. [Come far partire l’interfaccia](#come-far-partire-l’interfaccia)
+3. [Autenticazione](autenticazione)
+5. [Gestione lista amici](#gestione-lista-amici)
+6. [Chat Page](#chat-page)
+7. [Limitazioni di Streamlit, PubSub](#limitazioni-di-streamlit,-pubsub)
+8. [Redis Schema](#redis-schema)
+
 ## Framework utilizzato
 
 Per realizzare l’interfaccia grafica ho deciso di utilizzare [Streamlit](https://streamlit.io/).
