@@ -132,6 +132,7 @@ if __name__ == '__main__':
                         
                         if f.check_psw(psw):
                             f.change_psw(user,psw)
+                            print('Password modificata con successo')
                             break
                                         
                         else:
@@ -253,8 +254,9 @@ if __name__ == '__main__':
                         
                             if action:
                                 print('Scrivi <esc> per uscire')
+                                channel = f'channel:{gruppo}'
                                 ch.group_hist(gruppo)
-                                ch.group_chat(user,gruppo)
+                                ch.group_chat(user,channel)
 
                         else:
                             print('Non ci sono chat di gruppo attualmente attive')
@@ -271,7 +273,7 @@ if __name__ == '__main__':
                                 break
                             else:
                                 if f.new_group(nome):
-                                    f.open_group(nome)
+                                    f.create_group(nome)
                                     break
                                 else:
                                     print('Nome chat non disponibile')
@@ -279,7 +281,8 @@ if __name__ == '__main__':
                         if nome:
 
                             print('Scrivi <esc> per uscire')
-                            ch.group_chat(user,gruppo)
+                            channel = f'channel:{nome}'
+                            ch.group_chat(user,channel)
 
                     else:
                         ui.wrg_cmd()
