@@ -310,7 +310,7 @@ if __name__ == '__main__':
                             ui.exit()
                             ui.view_list(risultati)
 
-                            selezione = ui.action()
+                            selezione = ui.action(False)
                             
 
                             if not selezione:

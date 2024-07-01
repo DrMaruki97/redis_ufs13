@@ -35,9 +35,12 @@ def speak(user):
     else:
         return False
 
-def action():
-    action = input('>> ').lower()
-    return action
+def action(lower = True):
+    action = input('>> ')
+    if lower:
+        return action.lower()
+    else:
+        return action
 
 def exit():
     print('premi <enter> per uscire')
