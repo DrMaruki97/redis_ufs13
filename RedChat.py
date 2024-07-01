@@ -175,7 +175,7 @@ if __name__ == '__main__':
                         
                         if action:
 
-                                o_user_id = r.get(f'id_user:{o_user}')                          
+                                o_user_id = r.get(f'id_user:{o_user.lower()}')                          
 
                                 print(f'CHAT CON {o_user}')
                                 print('Scrivi <esc> per uscire')
