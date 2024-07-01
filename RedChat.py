@@ -1,8 +1,6 @@
-import redis 
 import ui_functions as ui
 import functions as f
 import chat as ch
-import threading as thr
 
 
 if __name__ == '__main__':
