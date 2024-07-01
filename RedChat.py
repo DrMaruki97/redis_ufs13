@@ -248,7 +248,7 @@ if __name__ == '__main__':
                                 if not action:
                                     break                            
 
-                                gruppo = f.resp_eval(action,contatti)
+                                gruppo = f.resp_eval(action,gruppi)
                                 if gruppo:
                                     break
                         
