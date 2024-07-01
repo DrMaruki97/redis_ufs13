@@ -82,3 +82,29 @@ def freccine(user,mittente):
         return '>'
     else:
         return '<'
+    
+
+def group_chat(user,channel):
+    subscriber_thread = subscribe_to_channel(channel) #quando uno avvia la f. viene sottoscritto al canale
+
+    try:
+        while True:
+            message = input(f"")
+            if message.lower() == 'esc':
+                break
+            else:
+                publish_message(channel, f"{user}::{message}")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        subscriber_thread.stop()
+
+
+def group_hist(group):
+    history = r.zrevrange(f"room:{group}", 0, 9, withscores=True)
+
+    for message, score in history[::-1]:
+        message = message.split('::')
+        dt = datetime.datetime.fromtimestamp(score)
+        ora = dt.strftime("%d-%m-%Y %H:%M:%S")
+        print(f"{message[0]}> {message[1]}  {ora}")
