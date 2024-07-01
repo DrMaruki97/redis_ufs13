@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
     comandi = {'LandingPage':['Login','Registration','Exit'],                   # Una lista di comandi, va data in argomento alle pagine
             'UserPage':['Chat','Rubrica','DnD','Change Password','Logout'],  # per stampare a schermo tutti i comandi che l'utente può
-            'ChatPage':['Start chat','Start timed chat','Home'],             # chiamare in una determinata pagina
+            'ChatPage':['Start chat','Start timed chat','Group chats','Home'],             # chiamare in una determinata pagina
             'RubricPage':['Aggiungi contatto','Rimuovi contatto','Home']
                 }
 
@@ -162,7 +162,7 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            print('premi <enter> per uscire')
+                            ui.exit()
                             action = input('Con chi vuoi chattare? >> ')
                             
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            print('premi <enter> per uscire')
+                            ui.exit()
                             action = input('Con chi vuoi chattare? >> ')
                             
 
@@ -225,7 +225,68 @@ if __name__ == '__main__':
                         print('Non hai ancora alcun contatto, aggiungi i tuoi amici!')
 
 
-                elif action in ('3','home'):
+                elif action in ('3','group chats'):
+
+                    print('''1. Entra in una chat di gruppo
+                    2. Crea una chat di gruppo''')
+                    ui.exit()
+
+                    action = ui.action()
+
+                    if action == '1':
+
+                        gruppi = f.open_group()
+                        if gruppi:
+
+                            while True:
+
+                                ui.view_list(gruppi)
+                                ui.exit()
+                                action = input('Con chi vuoi chattare? >> ')
+                            
+
+                                if not action:
+                                    break                            
+
+                                gruppo = f.resp_eval(action,contatti)
+                                if gruppo:
+                                    break
+                        
+                            if action:
+                                print('Scrivi <esc> per uscire')
+                                ch.group_hist(gruppo)
+                                ch.group_chat(user,gruppo)
+
+                        else:
+                            print('Non ci sono chat di gruppo attualmente attive')
+                    
+                    elif action == '2':
+
+                        while True:
+
+                            ui.exit()
+                            print('Come vuoi chiamare la tua chat di gruppo?')
+                            nome = ui.action()
+
+                            if not nome:
+                                break
+                            else:
+                                if f.new_group(nome):
+                                    f.open_group(nome)
+                                    break
+                                else:
+                                    print('Nome chat non disponibile')
+
+                        if nome:
+
+                            print('Scrivi <esc> per uscire')
+                            ch.group_chat(user,gruppo)
+
+                    else:
+                        ui.wrg_cmd()
+
+                
+                elif action in ('4','home'):
                     page = 'UserPage'
                     break
 
@@ -247,7 +308,7 @@ if __name__ == '__main__':
                     risultati = f.find_user(ricerca)
                     if risultati:
                         while True:
-                            print('premi <enter> per uscire')
+                            ui.exit()
                             ui.view_list(risultati)
 
                             selezione = ui.action()
@@ -279,7 +340,7 @@ if __name__ == '__main__':
                         while True:
 
                             ui.view_list(contatti)
-                            print('premi <enter> per uscire')
+                            ui.exit()
                             action = input('Chi vuoi rimuovere dalla tua rubrica? >> ')
                             
 
