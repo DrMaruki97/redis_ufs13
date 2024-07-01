@@ -306,7 +306,7 @@ if __name__ == '__main__':
                 if action in ('1','aggiungi contatto'):
                     print('Ricerca username,anche parziale')
 
-                    ricerca = ui.action()
+                    ricerca = ui.action(False)
                     risultati = f.find_user(ricerca)
                     if risultati:
                         while True:
