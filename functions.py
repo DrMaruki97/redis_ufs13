@@ -147,17 +147,18 @@ r = connect()
 
 def open_group():
     risultati = r.smembers(f"sys:chat_gruppo")
-    risultati = list(risultati)
-    if risultati:
-        for a, b in enumerate(risultati):
-            print(f"{a}: {b}")
-        choice = int(input("Choose the user: "))
-        return risultati[choice]
+    return list(risultati)
+
+
+def new_group(nome):
+    return not r.exists(f'room:{nome}')
+        
+    
 
 
 def create_group(nome_chat):
     r.sadd(f"sys:chat_gruppo", nome_chat)
-    return nome_chat
+    
 
 
 def resp_eval(azione,lista):
