@@ -210,7 +210,7 @@ if __name__ == '__main__':
                         
                         if action:
 
-                            o_user_id = r.get(f'id_user:{o_user}')
+                            o_user_id = r.get(f'id_user:{o_user.lower()}')
                     
                             print(f'CHAT A TEMPO CON {o_user}')
                             print('La chat scomparirà dopo un minuto dall\'ultimo messaggio')
