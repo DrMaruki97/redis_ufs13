@@ -255,14 +255,14 @@ if __name__ == '__main__':
                             selezione = ui.action()
                             
 
-                            if not action:
+                            if not selezione:
                                 break
                             
-                            friend = f.resp_eval(action,risultati)
+                            friend = f.resp_eval(selezione,risultati)
                             if friend:
                                 break
                         
-                        if action:
+                        if selezione:
                             if f.add_friends(user, friend):
                                 print(f"{friend} è ora tra i tuoi contatti")
                             else:

@@ -1,5 +1,4 @@
 import datetime as dt
-import StreamMethods as sm
 
 def page(intestazione,comandi,page):
     print(intestazione)

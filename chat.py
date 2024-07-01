@@ -58,7 +58,7 @@ def history_chat(user,id_chat):
         message = message.split('::')
         dt = datetime.datetime.fromtimestamp(score)
         ora = dt.strftime("%d-%m-%Y %H:%M:%S")
-        print(f"{freccine(user,message[0])}  {message}  {ora}")
+        print(f"{freccine(user,message[0])}  {message[1]}  {ora}")
 
 
 def dnd_on(user):

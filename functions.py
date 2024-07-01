@@ -53,7 +53,7 @@ def sign_up(username, pwd):
             id = r.incrby("sys:id_user", 1)
             r.set(f"id_user:{username.lower()}",id)
             r.sadd(f"sys:user_list", username)
-            offset = r.get(f"id_user:{username}")
+            offset = r.get(f"id_user:{username.lower()}")
             r.setbit('sys:dndmap', int(offset), 0)
     else:
         return False  # utente già esistente
