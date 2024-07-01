@@ -227,8 +227,7 @@ if __name__ == '__main__':
 
                 elif action in ('3','group chats'):
 
-                    print('''1. Entra in una chat di gruppo
-                    2. Crea una chat di gruppo''')
+                    print('1. Entra in una chat di gruppo\n2. Crea una chat di gruppo')
                     ui.exit()
 
                     action = ui.action()
