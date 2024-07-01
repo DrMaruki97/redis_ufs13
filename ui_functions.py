@@ -38,3 +38,6 @@ def speak(user):
 def action():
     action = input('>> ').lower()
     return action
+
+def exit():
+    print('premi <enter> per uscire')
