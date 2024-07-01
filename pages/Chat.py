@@ -7,9 +7,6 @@ import redis
 from streamlit_autorefresh import st_autorefresh
 import json
 
-
-
-print('Loading chat page')
 def pushMessagesInSession(idroom:str, timed=False):
     #Questo metodo, data un room ID, ottiene i messaggi di quella room, li formatta e li inserisce nella sessione.
 
@@ -94,6 +91,8 @@ def stream_data(message):
     for word in message.split():
         yield word + " "
         time.sleep(0.025)
+    # Questo metodo semplicemente utilizza un generatore per far ritornare i messaggi con un delay di x secondi.
+    # Serve per ricreare uno streaming stile "chatgpt" per far visualizzare i messaggi in tempo reale. 
 
 
 st.session_state['queue'] = []
@@ -146,10 +145,14 @@ if prompt := st.chat_input("What is up my man?"):
             pushMessagesInSession(friendList[selection])
         # Refresho la lista dei messaggi
             message_to_publish = json.dumps({f"{st.session_state.user}:{prompt}" : time.time()})
+            # Uso json.dumps non per creare un json ma per creare una stringa con varie informazioni. Non posso pubblicare un dizionario di python come messaggio di un channell.
+            # Si possono pubblicare solo stringhe. 
+
             st.session_state.r.publish(friendList[selection], json.dumps({f"{st.session_state.user}:{prompt}" : time.time()}))
             st.rerun()
         # Faccio un rerun se viene inviato un nuovo messaggio così da aggiornare la chat.
         elif timedChat and selection:
+            # Stessa roba ma per le timed chats
             st.session_state.r.zadd(f'st:room:*{friendList[selection]}', {f"{st.session_state.user}:{prompt}" : time.time()})
             st.session_state.r.expire(f'st:room:*{friendList[selection]}', 60)
             pushMessagesInSession(f"{friendList[selection]}", timed=True)
@@ -169,6 +172,7 @@ if st.sidebar.refresh_checkbox and selection:
     while True:
         time.sleep(0.5)
         pub.get_message()
+        # checko i nuovi messaggi ogni 0.5 secondi. Se ne arrivano di nuovi my_handler farà il proprio dovere
 
 
 

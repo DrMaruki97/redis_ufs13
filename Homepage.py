@@ -1,11 +1,25 @@
 import streamlit as st
 import redis
-from functions import hash_pwd, sign_up
+from functions import hash_pwd
 import time
+
+# Page config
 st.set_page_config(
     page_title="Homepage",
     page_icon="🔥",
 )
+
+def sign_up(username, pwd):
+    if not r.exists(f"user:{username.lower()}"):
+        c = r.set(f"user:{username.lower()}", hash_pwd(pwd))
+        if c:
+            id = r.incrby("sys:id_user", 1)
+            r.set(f"id_user:{username.lower()}",id)
+            r.sadd(f"sys:user_list", username)
+    else:
+        return False  # utente già esistente
+    return True
+
 # Funzione che ti permette di loggare con streamlit
 def streamlit_login(user, password, r):
     if user in ['', ' ']:
@@ -33,10 +47,6 @@ def streamlit_logout():
 
 
 
-# Questa parte di codice serve a fare in modo che se sei loggato non puoi accedere alla pagina di login.
-
-
-
 r = redis.Redis(
     host='redis-16230.c328.europe-west3-1.gce.redns.redis-cloud.com',
     port=16230,
@@ -52,7 +62,7 @@ st.title('🔥 :red[Red]Chat 💬')
 # Create an empty container
 placeholder = st.empty()
 
-# Insert a form in the container
+# Se l'user non è loggato compare il form per loggare o registrarsi
 if 'user' not in st.session_state:
   st.cache_data.clear()
   login_form = st.form(key='login_form')
@@ -90,22 +100,15 @@ if 'user' not in st.session_state:
         sign_up(username, password)
         st.session_state['status'] = r.set('st:dnd:user:'+username, '0')
         st.session_state['status'] = '0'
-        #r.set(f"user:{username.lower()}", hash_pwd(pwd))
-        #r.incrby("sys:id_user", 1)
-        #r.set(f"id_user:{username}", r.get("sys:id_user"))
         st.success(f"Congratulations, {username}. You're in.")
-        #r.sadd(f"sys:user_list", username)
-        #time.sleep(1)
         st.sidebar.image("pages/pepedance.gif")
         st.session_state['user'] = username
         time.sleep(1)
         st.rerun()
-
-        #st.switch_page('pages/Friends.py')
-        # Switcho pagina se la registrazione è andata a buon fine. 
     else:
         'Username already exists.'
 
+# Se l'user invece è loggato mostro i settings. 
 if 'user' in st.session_state:
     st.title('Settings')
     with st.sidebar:

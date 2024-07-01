@@ -3,7 +3,12 @@ from Homepage import streamlit_logout
 import pandas as pd
 import time
 
-print('Loading friends page')
+# Page config
+st.set_page_config(
+    page_title="Friends",
+    page_icon="🔥",
+)
+
 
 def userList(pattern):
     # mi serve una lista di username per il widget della ricerca
@@ -40,7 +45,9 @@ try:
 except:
     friends = []
     print('debug friends')
-# con hgetall creo un dizionario degli amici
+
+
+# con hgetall ottengo la friendlist dell'utente loggato (un hash) in modo da creare un dataframe con gli amici e le loro informazioni
 friends_df = pd.DataFrame({'User':friends.keys() for friend in friends})
 friends_df['Status'] = [st.session_state.r.get(f"st:dnd:user:{friend}") for friend in friends]
 friends_df['Status'] = friends_df['Status'].replace(to_replace='0', value='Available')
@@ -66,6 +73,7 @@ with col1:
         friends_df = st.data_editor(friends_df, hide_index=True)
         #Trasformo il dataframe in un dataframe editabile. Così posso selezionare quali utenti rimuovere
 with col2:
+    # Metto tutti i pulsanti nella seconda colonna
     selected_friends = [user for user in friends_df[friends_df['Select']==True]['User']] if friends else []
     add_button = st.button(label='Add a friend', use_container_width=True)
     search_button = st.button(label='Search', use_container_width=True)
@@ -77,10 +85,9 @@ if conf_remove and selected_friends:
     st.success('Removed your buddies.')
     st.rerun()
 
- #   st.session_state.r.hset(f"{u}")
 
 st.divider()
-# una linea ------------
+# una linea. Sotto mostro i risultati delle ricerche ------------
 
 def add_friend(friend_to_add):
     idroom = [int(st.session_state.r.get('id_user:'+friend_to_add)), int(st.session_state.r.get('id_user:'+st.session_state.user))]
