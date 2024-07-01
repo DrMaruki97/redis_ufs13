@@ -105,8 +105,8 @@ def find_user(username_da_cercare):
     lista = r.smembers("sys:user_list")
     risultato = []
     for utente in lista:
-        if username_da_cercare in utente:
-            if utente.startswith(username_da_cercare):
+        
+        if utente.lower().startswith(username_da_cercare.lower()):
                 risultato.append(utente)
     return risultato
 
