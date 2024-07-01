@@ -80,20 +80,20 @@ def check_psw(psw):
 
 def add_friends(user, friend):
     if r.exists("user:" + friend.lower()):
-        r.sadd(f"contacts:{user}", friend)
+        r.sadd(f"contacts:{user.lower()}", friend)
         return True
     return False
 
 
 def rm_friends(user, friend):
     if r.exists("user:" + friend.lower()):
-        r.srem(f"contacts:{user}", friend)
+        r.srem(f"contacts:{user.lower()}", friend)
         return True
     return False
 
 
 def get_friends(user):
-    contatti = r.smembers(f"contacts:{user}")
+    contatti = r.smembers(f"contacts:{user.lower()}")
     return list(contatti)
 
 
