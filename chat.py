@@ -47,7 +47,7 @@ def save_msg(channel, message):
     instante = time()
     chat_name = r.zadd(f"room:{name}", {f"{message}": int(instante)})
     if name[0] == '£':
-        r.expire(name,60)
+        r.expire(f'room:{name}',60)
     return chat_name
 
 
