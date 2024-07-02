@@ -4,7 +4,6 @@ import time
 from datetime import datetime
 from Homepage import streamlit_logout
 import redis
-from streamlit_autorefresh import st_autorefresh
 import json
 
 def pushMessagesInSession(idroom:str, timed=False):
